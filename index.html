@@ -34,7 +34,6 @@ body{
 button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
 select,input{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:var(--r-sm)}
-
 .header{
   display:flex;align-items:center;justify-content:space-between;
   padding:14px 20px;
@@ -59,14 +58,11 @@ select,input{font:inherit;color:inherit}
   color:var(--text-muted);transition:background 0.15s,color 0.15s;
 }
 .theme-btn:active{background:var(--surface-3);color:var(--text)}
-
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 16px;display:flex;flex-direction:column;gap:14px}
-
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;}
 .card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0;}
 .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-faint)}
 .card-body{padding:14px 16px 16px}
-
 .field{margin-bottom:14px}
 .field:last-child{margin-bottom:0}
 .field-label{font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;font-weight:500}
@@ -84,7 +80,6 @@ select{
   transition:border-color 0.15s;
 }
 select:focus{border-color:var(--primary);outline:none}
-
 .slider-row{display:flex;align-items:center;gap:10px}
 .slider-row input[type=range]{
   flex:1;-webkit-appearance:none;appearance:none;
@@ -100,8 +95,6 @@ select:focus{border-color:var(--primary);outline:none}
   font-size:13px;font-weight:700;color:var(--primary);
   min-width:48px;text-align:right;font-variant-numeric:tabular-nums;
 }
-
-/* Zero-noise pill */
 .zero-tag{
   display:inline-flex;align-items:center;gap:4px;
   font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;
@@ -109,8 +102,6 @@ select:focus{border-color:var(--primary);outline:none}
   background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);
   margin-left:8px;vertical-align:middle;
 }
-
-/* Skill info banner */
 .skill-info{
   background:var(--surface-2);border:1px solid var(--border);
   border-radius:var(--r-md);padding:10px 12px;margin-bottom:14px;
@@ -122,7 +113,6 @@ select:focus{border-color:var(--primary);outline:none}
   background:var(--primary-dim);border-radius:var(--r-sm);padding:4px 8px;
   word-break:break-all;
 }
-
 .haystack-box{
   background:var(--surface-2);border:1px solid var(--border);
   border-radius:var(--r-md);padding:12px;
@@ -132,7 +122,6 @@ select:focus{border-color:var(--primary);outline:none}
 }
 .haystack-box .trigger{color:var(--primary);font-weight:700;background:var(--primary-dim);border-radius:3px;padding:0 3px;}
 .preview-meta{font-size:11px;color:var(--text-faint);margin-top:8px}
-
 .run-btn{
   width:100%;padding:15px;
   background:var(--primary);color:#fff;
@@ -142,8 +131,6 @@ select:focus{border-color:var(--primary);outline:none}
 }
 .run-btn:active{opacity:0.85;transform:scale(0.98)}
 .run-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
-
-/* Fidelity bar */
 .fidelity-section{margin-bottom:14px}
 .fidelity-label{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
 .fidelity-track{height:8px;background:var(--surface-3);border-radius:var(--r-full);overflow:hidden;margin-bottom:4px}
@@ -155,28 +142,19 @@ select:focus{border-color:var(--primary);outline:none}
 .fidelity-pct.mid{color:var(--gold)}
 .fidelity-pct.low{color:var(--fail)}
 .fidelity-sub{font-size:12px;color:var(--text-muted)}
-
-.rate-row{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
-.rate-big{font-size:42px;font-weight:800;letter-spacing:-0.03em;line-height:1;color:var(--pass);font-variant-numeric:tabular-nums}
-.rate-big.mid{color:var(--gold)}
-.rate-big.low{color:var(--fail)}
-.rate-label{font-size:13px;color:var(--text-muted)}
-
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stat-pill{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:10px 8px;text-align:center;}
 .stat-num{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:3px}
 .stat-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.06em}
 .stat-pass .stat-num{color:var(--pass)}
 .stat-fail .stat-num{color:var(--fail)}
-.stat-total .stat-num{color:var(--primary)}
-
 .trial-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
 .dot{
   width:30px;height:30px;border-radius:var(--r-sm);
   display:flex;align-items:center;justify-content:center;
   font-size:9px;font-weight:700;font-family:var(--mono);
   border:1px solid transparent;transition:all 0.15s;
-  cursor:pointer;position:relative;
+  cursor:pointer;
 }
 .dot.pending{background:var(--surface-3);color:var(--text-faint);border-color:var(--border)}
 .dot.running{background:var(--primary-dim);color:var(--primary);border-color:var(--primary-border);animation:pulse 0.8s ease-in-out infinite}
@@ -184,8 +162,6 @@ select:focus{border-color:var(--primary);outline:none}
 .dot.partial{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border)}
 .dot.fail{background:var(--fail-dim);color:var(--fail);border-color:var(--fail-border)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
-
-/* Output log */
 .output-log{font-family:var(--mono);font-size:11px;margin-top:12px}
 .output-header{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
 .output-entry{
@@ -199,21 +175,18 @@ select:focus{border-color:var(--primary);outline:none}
 .out-score.partial{color:var(--gold)}
 .out-score.zero{color:var(--fail)}
 .out-text{color:var(--text-muted);word-break:break-all;line-height:1.4}
-
+.out-text.err{color:var(--fail);font-size:10px}
 .empty{display:flex;flex-direction:column;align-items:center;padding:32px 16px;color:var(--text-faint);text-align:center;gap:10px;}
 .empty svg{opacity:0.3}
 .empty p{font-size:13px;color:var(--text-muted);max-width:26ch}
-
 .provider-badge{
   display:inline-flex;align-items:center;gap:5px;
   padding:3px 10px;border-radius:var(--r-full);
   font-size:11px;font-weight:600;
   background:var(--primary-dim);color:var(--primary);border:1px solid var(--primary-border);
 }
-
 .progress-track{height:3px;background:var(--surface-3);border-radius:var(--r-full);overflow:hidden;margin-bottom:14px}
 .progress-fill{height:100%;background:var(--primary);border-radius:var(--r-full);transition:width 0.25s ease;width:0}
-
 .api-input{
   width:100%;padding:10px 12px;
   background:var(--surface-2);border:1px solid var(--border-med);
@@ -223,7 +196,6 @@ select:focus{border-color:var(--primary);outline:none}
 .api-input:focus{border-color:var(--primary);outline:none}
 .api-input::placeholder{color:var(--text-faint)}
 .api-hint{font-size:11px;color:var(--text-faint);margin-top:5px}
-
 .mode-row{display:flex;gap:6px;margin-bottom:14px}
 .mode-btn{
   flex:1;padding:8px 4px;border-radius:var(--r-md);font-size:12px;font-weight:600;
@@ -232,8 +204,6 @@ select:focus{border-color:var(--primary);outline:none}
 }
 .mode-btn.active{background:var(--primary-dim);border-color:var(--primary-border);color:var(--primary)}
 .mode-btn:active{opacity:0.7}
-
-/* Light mode overrides */
 [data-theme="light"] {
   --bg:#f7f6f2; --surface:#f9f8f5; --surface-2:#f3f0ec; --surface-3:#e6e4df;
   --border:rgba(0,0,0,0.07); --border-med:rgba(0,0,0,0.12);
@@ -242,7 +212,6 @@ select:focus{border-color:var(--primary);outline:none}
 </style>
 </head>
 <body>
-
 <header class="header">
   <div class="logo">
     <div class="logo-mark">
@@ -251,7 +220,7 @@ select:focus{border-color:var(--primary);outline:none}
         <path d="M3 13 L8 3 L13 13" stroke="#4f98a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
       </svg>
     </div>
-    <span class="logo-name">Skill-Haystack <span class="logo-version">v2</span></span>
+    <span class="logo-name">Skill-Haystack <span class="logo-version">v3</span></span>
   </div>
   <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
     <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -259,7 +228,6 @@ select:focus{border-color:var(--primary);outline:none}
 </header>
 
 <div class="scroll">
-
   <div class="card">
     <div class="card-header"><span class="card-title">Config</span></div>
     <div class="card-body">
@@ -291,15 +259,15 @@ select:focus{border-color:var(--primary);outline:none}
           <span id="zeroTag" class="zero-tag" style="display:none">BASELINE</span>
         </label>
         <div class="slider-row">
-          <input type="range" id="noiseSlider" min="0" max="2000" step="50" value="200">
-          <span class="slider-val" id="noiseVal">200</span>
+          <input type="range" id="noiseSlider" min="0" max="2000" step="50" value="0">
+          <span class="slider-val" id="noiseVal">0</span>
         </div>
       </div>
       <div class="field">
         <label class="field-label">Trials</label>
         <div class="slider-row">
-          <input type="range" id="trialsSlider" min="5" max="30" step="5" value="20">
-          <span class="slider-val" id="trialsVal">20</span>
+          <input type="range" id="trialsSlider" min="5" max="30" step="5" value="10">
+          <span class="slider-val" id="trialsVal">10</span>
         </div>
       </div>
       <div class="field">
@@ -318,20 +286,20 @@ select:focus{border-color:var(--primary);outline:none}
           <label class="field-label">Provider</label>
           <div class="select-wrap">
             <select id="providerSelect">
-              <option value="groq">Groq (llama-3.3-70b) — Free tier</option>
-              <option value="openai">OpenAI (gpt-4o)</option>
-              <option value="anthropic">Anthropic (claude-3-5-sonnet)</option>
-              <option value="gemini">Gemini (gemini-2.0-flash)</option>
-              <option value="mistral">Mistral (mistral-small)</option>
-              <option value="xai">xAI (grok-3)</option>
-              <option value="deepseek">DeepSeek (deepseek-chat)</option>
+              <option value="groq_instant">Groq — llama-3.1-8b-instant (free)</option>
+              <option value="groq_70b">Groq — llama-3.3-70b-versatile</option>
+              <option value="openai">OpenAI — gpt-4o</option>
+              <option value="anthropic">Anthropic — claude-3-5-sonnet</option>
+              <option value="gemini">Gemini — gemini-2.0-flash</option>
+              <option value="mistral">Mistral — mistral-small</option>
+              <option value="deepseek">DeepSeek — deepseek-chat</option>
             </select>
           </div>
         </div>
         <div class="field">
           <label class="field-label">API Key</label>
-          <input class="api-input" type="password" id="apiKey" placeholder="sk-..." autocomplete="off" autocorrect="off" spellcheck="false">
-          <div class="api-hint">Key stored in memory only. Never leaves your device.</div>
+          <input class="api-input" type="password" id="apiKey" placeholder="paste key here" autocomplete="off" autocorrect="off" spellcheck="false">
+          <div class="api-hint">Stored in memory only — never leaves your device.</div>
         </div>
       </div>
     </div>
@@ -343,7 +311,7 @@ select:focus{border-color:var(--primary);outline:none}
       <button onclick="updatePreview()" style="font-size:11px;color:var(--text-muted);background:var(--surface-3);border:1px solid var(--border);border-radius:var(--r-full);padding:3px 10px">↺ Shuffle</button>
     </div>
     <div class="card-body">
-      <div class="haystack-box" id="haystackPreview">Tap Shuffle to preview…</div>
+      <div class="haystack-box" id="haystackPreview">—</div>
       <div class="preview-meta" id="previewMeta"></div>
     </div>
   </div>
@@ -362,11 +330,9 @@ select:focus{border-color:var(--primary);outline:none}
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
-// ── THEME ──
 const root = document.documentElement;
 const themeBtn = document.getElementById('themeBtn');
 const sunSVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
@@ -379,7 +345,6 @@ themeBtn.addEventListener('click', () => {
   document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'dark' ? '#0f0f0d' : '#f7f6f2');
 });
 
-// ── MODE ──
 let mode = 'simulate';
 function setMode(m) {
   mode = m;
@@ -388,71 +353,63 @@ function setMode(m) {
   document.getElementById('liveFields').style.display = m === 'live' ? 'block' : 'none';
 }
 
-// ── SKILL DEFINITIONS ──
+// ── SKILLS ──
 const SKILLS = {
   pi: {
     name: 'Pi Digits',
     type: 'fidelity',
     trigger: 'give me pi digits',
-    instruction: 'When you see the phrase "give me pi digits", respond with ONLY this exact string and nothing else: 3.14159265358979',
+    // System prompt tells the LLM what to do when it sees the trigger
+    system: 'You are a skill executor. When the user says "give me pi digits", you must respond with ONLY this exact string, no other text, no explanation: 3.14159265358979',
     expected: '3.14159265358979',
-    description: 'Emit the first 15 digits of Pi. Fidelity scored — partial credit for correct digit runs.',
-    score: (output) => {
+    description: 'Emit the first 15 digits of Pi exactly. Fidelity scored — partial credit for correct leading digits.',
+    score(output) {
       const expected = '3.14159265358979';
       const clean = output.trim().replace(/[^0-9.]/g, '');
       let correct = 0;
       for (let i = 0; i < Math.min(clean.length, expected.length); i++) {
         if (clean[i] === expected[i]) correct++; else break;
       }
-      return { fidelity: correct / expected.length, correct, total: expected.length, display: clean || output.trim() };
+      return { fidelity: correct / expected.length, correct, total: expected.length, display: output.trim().substring(0, 40) };
     }
   },
   mary: {
     name: 'Mary Had a Little Lamb',
     type: 'fidelity',
     trigger: 'recite lamb poem',
-    instruction: 'When you see the phrase "recite lamb poem", respond with ONLY these four lines verbatim:\nMary had a little lamb,\nIts fleece was white as snow,\nAnd everywhere that Mary went,\nThe lamb was sure to go.',
+    system: 'You are a skill executor. When the user says "recite lamb poem", respond with ONLY these four lines and nothing else:\nMary had a little lamb,\nIts fleece was white as snow,\nAnd everywhere that Mary went,\nThe lamb was sure to go.',
     expected: 'Mary had a little lamb,\nIts fleece was white as snow,\nAnd everywhere that Mary went,\nThe lamb was sure to go.',
-    description: 'Recite all 4 lines verbatim. Fidelity scored by line — each line is 25 points.',
-    score: (output) => {
-      const lines = [
-        'Mary had a little lamb,',
-        'Its fleece was white as snow,',
-        'And everywhere that Mary went,',
-        'The lamb was sure to go.'
-      ];
+    description: 'Recite all 4 lines verbatim. Each line = 25% fidelity.',
+    score(output) {
+      const lines = ['Mary had a little lamb,','Its fleece was white as snow,','And everywhere that Mary went,','The lamb was sure to go.'];
       const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g,'');
       const outLines = output.split(/\n/).map(l => l.trim()).filter(Boolean);
-      let correct = 0;
-      lines.forEach(line => {
-        if (outLines.some(ol => norm(ol) === norm(line))) correct++;
-      });
-      return { fidelity: correct / lines.length, correct, total: lines.length, display: output.trim().substring(0,80) + (output.length > 80 ? '…' : '') };
+      let correct = lines.filter(line => outLines.some(ol => norm(ol) === norm(line))).length;
+      return { fidelity: correct / lines.length, correct, total: lines.length, display: output.trim().substring(0, 80) + (output.length > 80 ? '…' : '') };
     }
   },
   nato: {
     name: 'NATO Alphabet (A–J)',
     type: 'fidelity',
     trigger: 'spell it out NATO',
-    instruction: 'When you see the phrase "spell it out NATO", respond with ONLY this comma-separated list and nothing else: Alpha, Bravo, Charlie, Delta, Echo, Foxtrot, Golf, Hotel, India, Juliet',
+    system: 'You are a skill executor. When the user says "spell it out NATO", respond with ONLY this comma-separated list and nothing else: Alpha, Bravo, Charlie, Delta, Echo, Foxtrot, Golf, Hotel, India, Juliet',
     expected: 'Alpha, Bravo, Charlie, Delta, Echo, Foxtrot, Golf, Hotel, India, Juliet',
-    description: 'Emit first 10 NATO words in order. Fidelity scored — each word is 10 points.',
-    score: (output) => {
+    description: 'Emit first 10 NATO words in order. Each word = 10% fidelity.',
+    score(output) {
       const words = ['alpha','bravo','charlie','delta','echo','foxtrot','golf','hotel','india','juliet'];
-      const norm = s => s.toLowerCase().replace(/[^a-z]/g,' ').trim();
-      const normed = norm(output);
-      let correct = words.filter(w => normed.includes(w)).length;
-      return { fidelity: correct / words.length, correct, total: words.length, display: output.trim().substring(0,60) + (output.length > 60 ? '…' : '') };
+      const normed = output.toLowerCase().replace(/[^a-z]/g,' ');
+      const correct = words.filter(w => normed.includes(w)).length;
+      return { fidelity: correct / words.length, correct, total: words.length, display: output.trim().substring(0, 60) + (output.length > 60 ? '…' : '') };
     }
   },
   weather: {
     name: 'Weather Lookup',
     type: 'token',
-    trigger: 'what\'s the weather',
-    instruction: 'When you detect the phrase "what\'s the weather", respond with ONLY this token: BENCH-weather::4821',
+    trigger: "what's the weather",
+    system: "You are a skill router. When the user asks about the weather or says \"what's the weather\", respond with ONLY this token and nothing else: BENCH-weather::4821",
     expected: 'BENCH-weather::4821',
-    description: 'Emit exact token when weather trigger found. Pass/fail — no partial credit.',
-    score: (output) => {
+    description: 'Emit exact token on weather trigger. Pass/fail.',
+    score(output) {
       const pass = output.trim() === 'BENCH-weather::4821';
       return { fidelity: pass ? 1 : 0, correct: pass ? 1 : 0, total: 1, display: output.trim() };
     }
@@ -461,10 +418,10 @@ const SKILLS = {
     name: 'Language Translation',
     type: 'token',
     trigger: 'translate this',
-    instruction: 'When you detect the phrase "translate this", respond with ONLY this token: BENCH-translate::7193',
+    system: 'You are a skill router. When the user says "translate this", respond with ONLY this token and nothing else: BENCH-translate::7193',
     expected: 'BENCH-translate::7193',
-    description: 'Emit exact token when translate trigger found. Pass/fail.',
-    score: (output) => {
+    description: 'Emit exact token on translate trigger. Pass/fail.',
+    score(output) {
       const pass = output.trim() === 'BENCH-translate::7193';
       return { fidelity: pass ? 1 : 0, correct: pass ? 1 : 0, total: 1, display: output.trim() };
     }
@@ -473,10 +430,10 @@ const SKILLS = {
     name: 'Document Summarizer',
     type: 'token',
     trigger: 'summarize this',
-    instruction: 'When you detect the phrase "summarize this", respond with ONLY this token: BENCH-summarize::3047',
+    system: 'You are a skill router. When the user says "summarize this", respond with ONLY this token and nothing else: BENCH-summarize::3047',
     expected: 'BENCH-summarize::3047',
-    description: 'Emit exact token when summarize trigger found. Pass/fail.',
-    score: (output) => {
+    description: 'Emit exact token on summarize trigger. Pass/fail.',
+    score(output) {
       const pass = output.trim() === 'BENCH-summarize::3047';
       return { fidelity: pass ? 1 : 0, correct: pass ? 1 : 0, total: 1, display: output.trim() };
     }
@@ -484,27 +441,22 @@ const SKILLS = {
 };
 
 function currentSkill() { return SKILLS[document.getElementById('skillSelect').value]; }
-
 function onSkillChange() { updateSkillInfo(); updatePreview(); }
-
 function updateSkillInfo() {
   const s = currentSkill();
-  document.getElementById('skillInfoBox').innerHTML = `
-    <div class="skill-info-name">${s.name}</div>
-    <div class="skill-info-desc">${s.description}</div>
-    <div class="skill-info-expected">${s.expected.replace(/\n/g,' · ')}</div>
-  `;
+  document.getElementById('skillInfoBox').innerHTML =
+    `<div class="skill-info-name">${s.name}</div>
+     <div class="skill-info-desc">${s.description}</div>
+     <div class="skill-info-expected">${s.expected.replace(/\n/g,' · ')}</div>`;
 }
 
-// ── NOISE ──
 const noiseSlider = document.getElementById('noiseSlider');
 const noiseVal = document.getElementById('noiseVal');
 const trialsSlider = document.getElementById('trialsSlider');
 const trialsVal = document.getElementById('trialsVal');
-
 noiseSlider.addEventListener('input', () => {
   const v = parseInt(noiseSlider.value);
-  noiseVal.textContent = v === 0 ? '0' : v;
+  noiseVal.textContent = v;
   document.getElementById('zeroTag').style.display = v === 0 ? 'inline-flex' : 'none';
   updatePreview();
 });
@@ -522,119 +474,132 @@ const NOISE_WORDS = ['the','a','an','and','but','or','in','on','at','to','for','
   'data','stream','buffer','cache','vector','scalar','parse','render','compile','execute',
   'route','path','query','schema','model','field','value','key','record','cursor','offset',
   'metric','label','tag','measure','sample','average','median','index','range','scope'];
-
 function rw() { return NOISE_WORDS[Math.floor(Math.random() * NOISE_WORDS.length)]; }
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function buildHaystack(noiseCount, position, trigger) {
-  if (noiseCount === 0) return { words: ['__TRIGGER__'], triggerIdx: 0, trigger, position: 'start', isBaseline: true };
+function buildHaystack(noiseCount, position, skill) {
+  if (noiseCount === 0) return null;
   const words = Array.from({length: noiseCount}, rw);
   const pos = position === 'random' ? ['start','middle','end'][Math.floor(Math.random()*3)] : position;
-  let idx = pos === 'start' ? 0 : pos === 'end' ? words.length : Math.floor(words.length / 2);
-  words.splice(idx, 0, '__TRIGGER__');
-  return { words, triggerIdx: idx, trigger, position: pos, isBaseline: false };
+  const idx = pos === 'start' ? 0 : pos === 'end' ? words.length : Math.floor(words.length / 2);
+  // Embed the full skill system prompt as the "needle"
+  words.splice(idx, 0, '__SKILL__');
+  return { words, skillIdx: idx, position: pos };
 }
 
-let lastHaystack = null;
 function updatePreview() {
   const n = parseInt(noiseSlider.value);
   const skill = currentSkill();
-  const trigger = skill.trigger;
-  const h = buildHaystack(n, document.getElementById('positionSelect').value, trigger);
-  lastHaystack = h;
   if (n === 0) {
-    document.getElementById('haystackPreview').innerHTML = `<span class="trigger">${esc(trigger)}</span>`;
-    document.getElementById('previewMeta').textContent = `Zero-noise baseline — trigger only, no haystack`;
+    document.getElementById('haystackPreview').innerHTML =
+      `<span class="trigger">${esc(skill.trigger)}</span>`;
+    document.getElementById('previewMeta').textContent = 'Zero-noise baseline — skill instruction sent directly as system prompt';
   } else {
-    const html = h.words.map(w => w === '__TRIGGER__'
-      ? `<span class="trigger">${esc(trigger)}</span>`
-      : esc(w)).join(' ') + '.';
+    const h = buildHaystack(n, document.getElementById('positionSelect').value, skill);
+    const html = h.words.map(w => w === '__SKILL__'
+      ? `<span class="trigger">[SKILL INSTRUCTION]</span>` : esc(w)).join(' ') + '.';
     document.getElementById('haystackPreview').innerHTML = html;
-    document.getElementById('previewMeta').textContent = `${n} noise words · trigger at ~${h.triggerIdx} (${h.position})`;
+    document.getElementById('previewMeta').textContent = `${n} noise words · skill at position ~${h.skillIdx} (${h.position})`;
   }
 }
 
 // ── PROVIDERS ──
 const PROVIDERS = {
-  groq:     { url:'https://api.groq.com/openai/v1/chat/completions',      model:'llama-3.3-70b-versatile', compat:'openai' },
-  openai:   { url:'https://api.openai.com/v1/chat/completions',           model:'gpt-4o',                  compat:'openai' },
-  mistral:  { url:'https://api.mistral.ai/v1/chat/completions',           model:'mistral-small-latest',    compat:'openai' },
-  deepseek: { url:'https://api.deepseek.com/v1/chat/completions',         model:'deepseek-chat',           compat:'openai' },
-  xai:      { url:'https://api.x.ai/v1/chat/completions',                 model:'grok-3',                  compat:'openai' },
-  anthropic:{ url:'https://api.anthropic.com/v1/messages',                model:'claude-3-5-sonnet-latest',compat:'anthropic' },
-  gemini:   { url:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', model:'', compat:'gemini' },
+  groq_instant: { url:'https://api.groq.com/openai/v1/chat/completions', model:'llama-3.1-8b-instant',    compat:'openai' },
+  groq_70b:     { url:'https://api.groq.com/openai/v1/chat/completions', model:'llama-3.3-70b-versatile', compat:'openai' },
+  openai:       { url:'https://api.openai.com/v1/chat/completions',       model:'gpt-4o',                  compat:'openai' },
+  mistral:      { url:'https://api.mistral.ai/v1/chat/completions',       model:'mistral-small-latest',    compat:'openai' },
+  deepseek:     { url:'https://api.deepseek.com/v1/chat/completions',     model:'deepseek-chat',           compat:'openai' },
+  anthropic:    { url:'https://api.anthropic.com/v1/messages',            model:'claude-3-5-sonnet-latest',compat:'anthropic' },
+  gemini:       { url:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', model:'', compat:'gemini' },
 };
 
-function buildPrompt(skill, haystackText) {
-  const noiseCount = parseInt(noiseSlider.value);
-  const systemPart = noiseCount === 0
-    ? `You are a skill executor. The following is a skill instruction. Execute it exactly.`
-    : `You are a skill router with embedded skill instructions. Read the entire document carefully. Find the skill instruction buried within it and execute it exactly. Do not add any commentary.`;
-  return `${systemPart}\n\nDocument:\n${haystackText}`;
+// Build messages array:
+// - Zero noise: system = skill instruction, user = trigger phrase
+// - With noise:  system = "you are a skill router reading a document", user = document with skill buried in noise
+function buildMessages(skill, noiseCount) {
+  if (noiseCount === 0) {
+    return [
+      { role: 'system', content: skill.system },
+      { role: 'user',   content: skill.trigger }
+    ];
+  } else {
+    const h = buildHaystack(noiseCount, document.getElementById('positionSelect').value, skill);
+    const doc = h.words.map(w => w === '__SKILL__' ? skill.system : w).join(' ') + '.';
+    return [
+      { role: 'system', content: 'You are a skill router. Read the entire document the user provides. Find any embedded skill instruction and execute it exactly as instructed. Output only what the skill instruction specifies — no commentary, no explanation.' },
+      { role: 'user',   content: doc }
+    ];
+  }
 }
 
-async function callLLM(haystackText) {
-  const skill = currentSkill();
-  const prov = document.getElementById('providerSelect').value;
+async function callLLM(skill, noiseCount) {
+  const provKey = document.getElementById('providerSelect').value;
   const apiKey = document.getElementById('apiKey').value.trim();
-  const p = PROVIDERS[prov];
-  const prompt = buildPrompt(skill, haystackText);
+  const p = PROVIDERS[provKey];
+  const messages = buildMessages(skill, noiseCount);
   try {
-    let res, text;
+    let res, text, rawErr = null;
     if (p.compat === 'openai') {
       res = await fetch(p.url, {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
-        body: JSON.stringify({ model: p.model, messages:[{role:'user',content:prompt}], max_tokens:200, temperature:0 })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({ model: p.model, messages, max_tokens: 200, temperature: 0 })
       });
       const d = await res.json();
+      if (d.error) rawErr = d.error.message || JSON.stringify(d.error);
       text = d.choices?.[0]?.message?.content?.trim() || '';
     } else if (p.compat === 'anthropic') {
       res = await fetch(p.url, {
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
-        body: JSON.stringify({ model: p.model, max_tokens:200, messages:[{role:'user',content:prompt}] })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({ model: p.model, max_tokens: 200, system: messages[0].content, messages: [messages[1]] })
       });
       const d = await res.json();
+      if (d.error) rawErr = d.error.message || JSON.stringify(d.error);
       text = d.content?.[0]?.text?.trim() || '';
     } else if (p.compat === 'gemini') {
+      const sysInstr = messages[0].content;
+      const userMsg  = messages[1].content;
       res = await fetch(`${p.url}?key=${apiKey}`, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{maxOutputTokens:200,temperature:0} })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: sysInstr }] },
+          contents: [{ parts: [{ text: userMsg }] }],
+          generationConfig: { maxOutputTokens: 200, temperature: 0 }
+        })
       });
       const d = await res.json();
+      if (d.error) rawErr = d.error.message || JSON.stringify(d.error);
       text = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
     }
+    if (rawErr) return { fidelity: 0, correct: 0, total: 1, display: 'API ERR: ' + rawErr.substring(0, 80), output: rawErr, isErr: true };
     const scored = skill.score(text);
     return { ...scored, output: text };
   } catch(e) {
-    return { fidelity: 0, correct: 0, total: 1, display: 'API_ERROR', output: 'API_ERROR' };
+    return { fidelity: 0, correct: 0, total: 1, display: 'FETCH ERR: ' + e.message.substring(0,60), output: e.message, isErr: true };
   }
 }
 
-async function simulateTrial(noiseCount) {
-  await new Promise(r => setTimeout(r, 50 + Math.random() * 100));
-  const skill = currentSkill();
-  // baseline (0 noise) = very high fidelity; degrade as noise increases
+async function simulateTrial(skill, noiseCount) {
+  await new Promise(r => setTimeout(r, 50 + Math.random() * 80));
   const baseFidelity = noiseCount === 0 ? 0.97 : Math.max(0, 0.92 - (noiseCount / 2000) * 0.75);
   const raw = Math.random();
   if (raw < baseFidelity) {
-    // full pass
-    return { fidelity: 1, correct: skill.score(skill.expected).total, total: skill.score(skill.expected).total, display: skill.expected.substring(0,40), output: skill.expected };
+    const s = skill.score(skill.expected);
+    return { fidelity: 1, correct: s.total, total: s.total, display: skill.expected.substring(0,40), output: skill.expected };
   } else if (raw < baseFidelity + 0.15) {
-    // partial — simulate partial output
-    const partialFrac = 0.3 + Math.random() * 0.5;
-    const partialLen = Math.floor(skill.expected.length * partialFrac);
-    const partial = skill.expected.substring(0, partialLen);
-    const scored = skill.score(partial);
-    return { ...scored, output: partial };
+    const frac = 0.3 + Math.random() * 0.5;
+    const partial = skill.expected.substring(0, Math.floor(skill.expected.length * frac));
+    const s = skill.score(partial);
+    return { ...s, output: partial };
   } else {
-    return { fidelity: 0, correct: 0, total: skill.score(skill.expected).total, display: 'not_found', output: '' };
+    const s = skill.score(skill.expected);
+    return { fidelity: 0, correct: 0, total: s.total, display: 'not_found', output: '' };
   }
 }
 
-// ── RUN ──
 let running = false;
 async function startRun() {
   if (running) return;
@@ -644,32 +609,16 @@ async function startRun() {
   const skill = currentSkill();
   const isLive = mode === 'live';
   if (isLive && !document.getElementById('apiKey').value.trim()) {
-    alert('Please enter an API key to use Live API mode.');
+    alert('Please enter an API key for Live API mode.');
     running = false; return;
   }
-
   document.getElementById('runBtn').disabled = true;
+  const provKey = document.getElementById('providerSelect').value;
   const badge = document.getElementById('providerBadge');
-  badge.textContent = isLive ? document.getElementById('providerSelect').value.toUpperCase() : 'SIMULATED';
+  badge.textContent = isLive ? provKey.toUpperCase().replace('_',' ') : 'SIMULATED';
   badge.style.display = 'inline-flex';
 
-  // Build haystack once for this run
-  const trigger = skill.trigger;
-  let haystackText;
-  if (noiseCount === 0) {
-    haystackText = skill.instruction;
-  } else {
-    const h = buildHaystack(noiseCount, document.getElementById('positionSelect').value, trigger);
-    lastHaystack = h;
-    // Replace __TRIGGER__ with the skill instruction embedded inline
-    haystackText = h.words.map(w => w === '__TRIGGER__' ? skill.instruction : w).join(' ') + '.';
-    document.getElementById('haystackPreview').innerHTML = h.words.map(w =>
-      w === '__TRIGGER__' ? `<span class="trigger">${esc(trigger)}</span>` : esc(w)).join(' ') + '.';
-    document.getElementById('previewMeta').textContent = `${noiseCount} noise words · trigger at ~${h.triggerIdx} (${h.position})`;
-  }
-
-  let totalFidelity = 0;
-  let passes = 0, partials = 0, fails = 0;
+  let totalFidelity = 0, passes = 0, partials = 0, fails = 0;
   const trialResults = [];
 
   const body = document.getElementById('resultsBody');
@@ -678,10 +627,10 @@ async function startRun() {
     <div class="fidelity-section">
       <div class="fidelity-label">Avg Fidelity</div>
       <div class="fidelity-row">
-        <div class="fidelity-pct" id="fidelityPct">—</div>
+        <div class="fidelity-pct low" id="fidelityPct">—</div>
         <div class="fidelity-sub" id="fidelitySub">running…</div>
       </div>
-      <div class="fidelity-track"><div class="fidelity-fill" id="fidelityFill" style="width:0"></div></div>
+      <div class="fidelity-track"><div class="fidelity-fill low" id="fidelityFill" style="width:0"></div></div>
     </div>
     <div class="stats-row">
       <div class="stat-pill stat-pass"><div class="stat-num" id="sPass">0</div><div class="stat-label">Full</div></div>
@@ -689,8 +638,7 @@ async function startRun() {
       <div class="stat-pill stat-fail"><div class="stat-num" id="sFail">0</div><div class="stat-label">Zero</div></div>
     </div>
     <div class="trial-grid" id="dotGrid"></div>
-    <div class="output-log" id="outputLog"></div>
-  `;
+    <div class="output-log" id="outputLog"></div>`;
 
   const dotGrid = document.getElementById('dotGrid');
   const dots = [];
@@ -704,49 +652,40 @@ async function startRun() {
 
   for (let i = 0; i < trials; i++) {
     dots[i].className = 'dot running';
-    const result = isLive ? await callLLM(haystackText) : await simulateTrial(noiseCount);
+    const result = isLive ? await callLLM(skill, noiseCount) : await simulateTrial(skill, noiseCount);
     trialResults.push(result);
-
     const frac = result.fidelity;
-    let dotClass = frac === 1 ? 'pass' : frac > 0 ? 'partial' : 'fail';
-    dots[i].className = `dot ${dotClass}`;
-    dots[i].title = `${Math.round(frac*100)}%`;
-
-    if (frac === 1) passes++;
-    else if (frac > 0) partials++;
-    else fails++;
-
+    dots[i].className = `dot ${frac === 1 ? 'pass' : frac > 0 ? 'partial' : 'fail'}`;
+    if (frac === 1) passes++; else if (frac > 0) partials++; else fails++;
     totalFidelity += frac;
     const avgFid = totalFidelity / (i+1);
     const pct = Math.round(avgFid * 100);
-    const fidClass = avgFid >= 0.85 ? '' : avgFid >= 0.5 ? ' mid' : ' low';
-
+    const cls = avgFid >= 0.85 ? '' : avgFid >= 0.5 ? ' mid' : ' low';
     document.getElementById('fidelityPct').textContent = pct + '%';
-    document.getElementById('fidelityPct').className = 'fidelity-pct' + fidClass;
+    document.getElementById('fidelityPct').className = 'fidelity-pct' + cls;
     document.getElementById('fidelityFill').style.width = pct + '%';
-    document.getElementById('fidelityFill').className = 'fidelity-fill' + fidClass;
-    document.getElementById('fidelitySub').textContent = `${passes} full · ${partials} partial · ${fails} zero — ${i+1}/${trials} trials`;
+    document.getElementById('fidelityFill').className = 'fidelity-fill' + cls;
+    document.getElementById('fidelitySub').textContent = `${passes} full · ${partials} partial · ${fails} zero — ${i+1}/${trials}`;
     document.getElementById('sPass').textContent = passes;
     document.getElementById('sPartial').textContent = partials;
     document.getElementById('sFail').textContent = fails;
     document.getElementById('progFill').style.width = ((i+1)/trials*100) + '%';
   }
 
-  // Final fidelity label
   const avgFid = totalFidelity / trials;
   const noiseLbl = noiseCount === 0 ? 'baseline (0 noise)' : `${noiseCount} noise words`;
-  document.getElementById('fidelitySub').textContent = `${Math.round(avgFid*100)}% avg · ${noiseLbl} · ${trials} trials`;
+  document.getElementById('fidelitySub').textContent =
+    `${Math.round(avgFid*100)}% avg · ${noiseLbl} · ${trials} trials`;
 
-  // Output log — show all trials
-  const ol = document.getElementById('outputLog');
-  ol.innerHTML = '<div class="output-header">Trial Output Log</div>' +
+  document.getElementById('outputLog').innerHTML =
+    '<div class="output-header">Trial Output Log</div>' +
     trialResults.map((r, i) => {
-      const scoreClass = r.fidelity === 1 ? 'full' : r.fidelity > 0 ? 'partial' : 'zero';
-      const scoreLbl = Math.round(r.fidelity * 100) + '%';
+      const cls = r.fidelity === 1 ? 'full' : r.fidelity > 0 ? 'partial' : 'zero';
+      const textCls = r.isErr ? ' err' : '';
       return `<div class="output-entry">
         <span class="out-trial">#${String(i+1).padStart(2,'0')}</span>
-        <span class="out-score ${scoreClass}">${scoreLbl}</span>
-        <span class="out-text">${esc(r.display || r.output || 'empty')}</span>
+        <span class="out-score ${cls}">${Math.round(r.fidelity*100)}%</span>
+        <span class="out-text${textCls}">${esc(r.display || r.output || 'empty')}</span>
       </div>`;
     }).join('');
 
@@ -754,8 +693,9 @@ async function startRun() {
   document.getElementById('runBtn').disabled = false;
 }
 
-// ── INIT ──
 onSkillChange();
+// Init zero-tag
+document.getElementById('zeroTag').style.display = 'inline-flex';
 </script>
 </body>
 </html>
