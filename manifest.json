@@ -1,0 +1,71 @@
+{
+  "version": "haystack-v1",
+  "description": "Single-skill manifest for Stage 1 haystack testing. Swap skill_id in runner config to test different skills.",
+  "skills": [
+    {
+      "id": "weather",
+      "name": "Weather Lookup",
+      "trigger_phrases": [
+        "what's the weather",
+        "current weather",
+        "weather forecast",
+        "is it raining",
+        "temperature outside"
+      ],
+      "token": "BENCH-weather::4821",
+      "description": "Returns current weather conditions for a location."
+    },
+    {
+      "id": "translate",
+      "name": "Language Translation",
+      "trigger_phrases": [
+        "translate this",
+        "in spanish",
+        "what does this mean in",
+        "how do you say",
+        "translate to french"
+      ],
+      "token": "BENCH-translate::7193",
+      "description": "Translates text between languages."
+    },
+    {
+      "id": "summarize",
+      "name": "Document Summarizer",
+      "trigger_phrases": [
+        "summarize this",
+        "give me a summary",
+        "tl;dr",
+        "key points from",
+        "brief overview of"
+      ],
+      "token": "BENCH-summarize::3047",
+      "description": "Summarizes a document or passage."
+    },
+    {
+      "id": "calendar",
+      "name": "Calendar Event Creator",
+      "trigger_phrases": [
+        "schedule a meeting",
+        "add to my calendar",
+        "book an appointment",
+        "set a reminder",
+        "block time for"
+      ],
+      "token": "BENCH-calendar::9562",
+      "description": "Creates calendar events and reminders."
+    },
+    {
+      "id": "search",
+      "name": "Web Search",
+      "trigger_phrases": [
+        "search for",
+        "look up",
+        "find information about",
+        "google",
+        "what is the latest on"
+      ],
+      "token": "BENCH-search::6384",
+      "description": "Performs a web search and returns results."
+    }
+  ]
+}

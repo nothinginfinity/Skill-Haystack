@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill-Haystack</title>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface-2: #222;
+      --border: #2e2e2e;
+      --text: #e2e2e2;
+      --text-muted: #888;
+      --accent: #4f98a3;
+      --pass: #6daa45;
+      --fail: #dd6974;
+      --font: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      --font-ui: system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-ui); min-height: 100vh; padding: 2rem; }
+    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .subtitle { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2rem; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 1100px; }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
+    .card h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 1rem; }
+    label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem; margin-top: 0.75rem; }
+    label:first-of-type { margin-top: 0; }
+    select, input[type=range], input[type=number] {
+      width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 4px; padding: 0.4rem 0.6rem;
+      font-family: var(--font-ui); font-size: 0.875rem;
+    }
+    input[type=range] { padding: 0.2rem 0; cursor: pointer; }
+    .range-row { display: flex; align-items: center; gap: 0.75rem; }
+    .range-row input { flex: 1; }
+    .range-val { font-size: 0.85rem; font-weight: 600; color: var(--accent); min-width: 3rem; text-align: right; }
+    button {
+      margin-top: 1.25rem; width: 100%; padding: 0.65rem;
+      background: var(--accent); color: #fff; border: none; border-radius: 6px;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s;
+    }
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .haystack-preview {
+      font-family: var(--font); font-size: 0.75rem; line-height: 1.7;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 1rem; max-height: 180px; overflow-y: auto;
+      word-break: break-word;
+    }
+    .haystack-preview .trigger { color: var(--accent); font-weight: 700; background: rgba(79,152,163,0.15); border-radius: 3px; padding: 0 2px; }
+    .results-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1rem; }
+    .pass-rate { font-size: 2rem; font-weight: 800; color: var(--pass); }
+    .pass-rate.low { color: var(--fail); }
+    .pass-rate.mid { color: #e8af34; }
+    .trial-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .trial-dot {
+      width: 28px; height: 28px; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 700; font-family: var(--font);
+      cursor: default;
+    }
+    .trial-dot.pass { background: rgba(109,170,69,0.2); color: var(--pass); border: 1px solid rgba(109,170,69,0.3); }
+    .trial-dot.fail { background: rgba(221,105,116,0.2); color: var(--fail); border: 1px solid rgba(221,105,116,0.3); }
+    .trial-dot.pending { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+    .trial-dot.running { background: rgba(79,152,163,0.2); color: var(--accent); border: 1px solid rgba(79,152,163,0.4); animation: pulse 0.8s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.4 } }
+    .failure-log { margin-top: 1rem; font-family: var(--font); font-size: 0.72rem; color: var(--text-muted); }
+    .failure-log .fail-entry { color: var(--fail); margin-bottom: 0.2rem; }
+    .full-width { grid-column: 1 / -1; }
+    .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 99px; font-size: 0.7rem; font-weight: 600; }
+    .tag-accent { background: rgba(79,152,163,0.15); color: var(--accent); border: 1px solid rgba(79,152,163,0.3); }
+  </style>
+</head>
+<body>
+  <h1>🌾 Skill-Haystack</h1>
+  <p class="subtitle">Find the trigger. Emit the token. Measure reliability.</p>
+
+  <div class="grid">
+    <!-- Config -->
+    <div class="card">
+      <h2>Configuration</h2>
+
+      <label>Skill</label>
+      <select id="skillSelect">
+        <option value="weather" data-token="BENCH-weather::4821" data-triggers="what's the weather,current weather,weather forecast">Weather Lookup</option>
+        <option value="translate" data-token="BENCH-translate::7193" data-triggers="translate this,how do you say,in spanish">Language Translation</option>
+        <option value="summarize" data-token="BENCH-summarize::3047" data-triggers="summarize this,tl;dr,key points from">Document Summarizer</option>
+        <option value="calendar" data-token="BENCH-calendar::9562" data-triggers="schedule a meeting,add to my calendar,book an appointment">Calendar Event Creator</option>
+        <option value="search" data-token="BENCH-search::6384" data-triggers="search for,look up,find information about">Web Search</option>
+      </select>
+
+      <label>Noise Word Count</label>
+      <div class="range-row">
+        <input type="range" id="noiseSlider" min="50" max="2000" step="50" value="200">
+        <span class="range-val" id="noiseVal">200</span>
+      </div>
+
+      <label>Trials</label>
+      <div class="range-row">
+        <input type="range" id="trialsSlider" min="5" max="50" step="5" value="25">
+        <span class="range-val" id="trialsVal">25</span>
+      </div>
+
+      <label>Trigger Position</label>
+      <select id="positionSelect">
+        <option value="random">Random</option>
+        <option value="start">Start</option>
+        <option value="middle">Middle</option>
+        <option value="end">End</option>
+      </select>
+
+      <button id="runBtn">▶ Run Benchmark</button>
+    </div>
+
+    <!-- Haystack Preview -->
+    <div class="card">
+      <h2>Haystack Preview <span class="tag tag-accent" id="previewTag">200 words</span></h2>
+      <div class="haystack-preview" id="haystackPreview">Configure and run to see the generated haystack...</div>
+    </div>
+
+    <!-- Results -->
+    <div class="card full-width">
+      <h2>Results</h2>
+      <div class="results-header">
+        <div class="pass-rate" id="passRateDisplay">—</div>
+        <div style="color: var(--text-muted); font-size: 0.85rem;" id="passRateLabel">pass rate</div>
+      </div>
+      <div class="trial-grid" id="trialGrid"></div>
+      <div class="failure-log" id="failureLog"></div>
+    </div>
+  </div>
+
+  <script>
+    const NOISE_WORDS = [
+      'the','a','an','and','but','or','in','on','at','to','for','with','by','from','up','about',
+      'into','through','during','before','after','above','below','between','out','off','over',
+      'under','again','then','once','here','there','when','where','why','how','all','each',
+      'every','both','few','more','most','other','some','such','than','too','very','just',
+      'because','as','until','while','although','however','therefore','moreover','furthermore',
+      'nevertheless','otherwise','instead','meanwhile','subsequently','consequently',
+      'approximately','specifically','generally','recently','previously','currently',
+      'typically','usually','frequently','occasionally','rarely','almost','also','already',
+      'always','never','often','since','still','yet','today','tomorrow','yesterday','now',
+    ];
+
+    const noiseSlider = document.getElementById('noiseSlider');
+    const noiseVal = document.getElementById('noiseVal');
+    const trialsSlider = document.getElementById('trialsSlider');
+    const trialsVal = document.getElementById('trialsVal');
+    const skillSelect = document.getElementById('skillSelect');
+    const positionSelect = document.getElementById('positionSelect');
+    const runBtn = document.getElementById('runBtn');
+    const haystackPreview = document.getElementById('haystackPreview');
+    const previewTag = document.getElementById('previewTag');
+    const trialGrid = document.getElementById('trialGrid');
+    const passRateDisplay = document.getElementById('passRateDisplay');
+    const passRateLabel = document.getElementById('passRateLabel');
+    const failureLog = document.getElementById('failureLog');
+
+    noiseSlider.addEventListener('input', () => { noiseVal.textContent = noiseSlider.value; updatePreview(); });
+    trialsSlider.addEventListener('input', () => { trialsVal.textContent = trialsSlider.value; });
+    skillSelect.addEventListener('change', updatePreview);
+    positionSelect.addEventListener('change', updatePreview);
+
+    function randomWord() { return NOISE_WORDS[Math.floor(Math.random() * NOISE_WORDS.length)]; }
+
+    function getTriggerPhrase() {
+      const opt = skillSelect.options[skillSelect.selectedIndex];
+      const triggers = opt.dataset.triggers.split(',');
+      return triggers[Math.floor(Math.random() * triggers.length)];
+    }
+
+    function buildHaystack(noiseCount, position, trigger) {
+      const noise = Array.from({ length: noiseCount }, randomWord);
+      let idx;
+      const pos = position === 'random' ? ['start','middle','end'][Math.floor(Math.random()*3)] : position;
+      if (pos === 'start') idx = 0;
+      else if (pos === 'end') idx = noise.length;
+      else idx = Math.floor(noise.length / 2);
+      noise.splice(idx, 0, '[[TRIGGER]]');
+      return { words: noise, triggerIdx: idx, trigger };
+    }
+
+    function renderHaystack({ words, triggerIdx, trigger }) {
+      return words.map((w, i) =>
+        w === '[[TRIGGER]]'
+          ? `<span class="trigger">${trigger}</span>`
+          : w
+      ).join(' ') + '.';
+    }
+
+    function updatePreview() {
+      const n = parseInt(noiseSlider.value);
+      const trigger = getTriggerPhrase();
+      const h = buildHaystack(n, positionSelect.value, trigger);
+      haystackPreview.innerHTML = renderHaystack(h);
+      previewTag.textContent = `${n} words`;
+    }
+
+    updatePreview();
+
+    // Simulated trial runner (swap callLLM for real API)
+    async function simulateTrial(token, passRate = 0.9) {
+      await new Promise(r => setTimeout(r, 80 + Math.random() * 200));
+      const pass = Math.random() < passRate;
+      const failModes = ['token_absent', 'wrong_token', 'malformed_token'];
+      return {
+        pass,
+        failureMode: pass ? null : failModes[Math.floor(Math.random() * failModes.length)],
+      };
+    }
+
+    runBtn.addEventListener('click', async () => {
+      const trials = parseInt(trialsSlider.value);
+      const noiseCount = parseInt(noiseSlider.value);
+      const opt = skillSelect.options[skillSelect.selectedIndex];
+      const token = opt.dataset.token;
+
+      runBtn.disabled = true;
+      trialGrid.innerHTML = '';
+      failureLog.innerHTML = '';
+      passRateDisplay.textContent = '—';
+      passRateLabel.textContent = 'running...';
+
+      // Build pending dots
+      const dots = [];
+      for (let i = 0; i < trials; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'trial-dot pending';
+        dot.textContent = String(i + 1).padStart(2, '0');
+        trialGrid.appendChild(dot);
+        dots.push(dot);
+      }
+
+      // Show a haystack for this run
+      const trigger = getTriggerPhrase();
+      const h = buildHaystack(noiseCount, positionSelect.value, trigger);
+      haystackPreview.innerHTML = renderHaystack(h);
+
+      let passes = 0;
+      const failures = [];
+
+      for (let i = 0; i < trials; i++) {
+        dots[i].className = 'trial-dot running';
+        const { pass, failureMode } = await simulateTrial(token);
+        dots[i].className = `trial-dot ${pass ? 'pass' : 'fail'}`;
+        dots[i].title = pass ? 'PASS' : failureMode;
+        if (pass) passes++;
+        else failures.push({ trial: i + 1, failureMode });
+
+        const rate = passes / (i + 1);
+        passRateDisplay.textContent = `${(rate * 100).toFixed(0)}%`;
+        passRateDisplay.className = 'pass-rate' + (rate >= 0.9 ? '' : rate >= 0.7 ? ' mid' : ' low');
+        passRateLabel.textContent = `${passes}/${i + 1} trials passed`;
+      }
+
+      if (failures.length > 0) {
+        failureLog.innerHTML = '<div style="margin-bottom:0.5rem; color: var(--text-muted)">Failure log:</div>' +
+          failures.map(f => `<div class="fail-entry">Trial ${String(f.trial).padStart(2,'0')}: ${f.failureMode}</div>`).join('');
+      }
+
+      runBtn.disabled = false;
+    });
+  </script>
+</body>
+</html>

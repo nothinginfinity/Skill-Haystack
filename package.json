@@ -1,0 +1,18 @@
+{
+  "name": "skill-haystack",
+  "version": "0.1.0",
+  "description": "Single-skill haystack benchmark for LLM routing reliability",
+  "main": "src/runner.ts",
+  "scripts": {
+    "run:bench": "ts-node src/runner.ts",
+    "run:bench:deep": "ts-node src/runner.ts --noise-words 1000",
+    "run:bench:all-skills": "for skill in weather translate summarize calendar search; do ts-node src/runner.ts --skill-id $skill; done"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "ts-node": "^10.9.0",
+    "@types/node": "^20.0.0"
+  },
+  "keywords": ["llm", "benchmark", "routing", "eval", "haystack"],
+  "license": "MIT"
+}
