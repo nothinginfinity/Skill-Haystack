@@ -15,6 +15,7 @@
       --accent: #4f98a3;
       --pass: #6daa45;
       --fail: #dd6974;
+      --warn: #e8af34;
       --font: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
       --font-ui: system-ui, -apple-system, sans-serif;
     }
@@ -28,7 +29,7 @@
     .card h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 1rem; }
     label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem; margin-top: 0.75rem; }
     label:first-of-type { margin-top: 0; }
-    select, input[type=range], input[type=number] {
+    select, input[type=range] {
       width: 100%; background: var(--surface-2); border: 1px solid var(--border);
       color: var(--text); border-radius: 4px; padding: 0.4rem 0.6rem;
       font-family: var(--font-ui); font-size: 0.875rem;
@@ -37,13 +38,20 @@
     .range-row { display: flex; align-items: center; gap: 0.75rem; }
     .range-row input { flex: 1; }
     .range-val { font-size: 0.85rem; font-weight: 600; color: var(--accent); min-width: 3rem; text-align: right; }
-    button {
-      margin-top: 1.25rem; width: 100%; padding: 0.65rem;
-      background: var(--accent); color: #fff; border: none; border-radius: 6px;
-      font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s;
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+      padding: 0.6rem 1rem; border: none; border-radius: 6px;
+      font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s;
+      text-decoration: none;
     }
-    button:hover { opacity: 0.85; }
-    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #fff; width: 100%; margin-top: 1.25rem; }
+    .btn-csv  { background: #2a3d2a; color: var(--pass);  border: 1px solid rgba(109,170,69,0.35); }
+    .btn-md   { background: #2a2e3d; color: #7b9cdc;      border: 1px solid rgba(123,156,220,0.35); }
+    .btn-json { background: #2e2a1e; color: var(--warn);  border: 1px solid rgba(232,175,52,0.35); }
+    .export-row { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .export-row .btn { flex: 1; margin-top: 0; }
     .haystack-preview {
       font-family: var(--font); font-size: 0.75rem; line-height: 1.7;
       background: var(--surface-2); border: 1px solid var(--border);
@@ -51,27 +59,35 @@
       word-break: break-word;
     }
     .haystack-preview .trigger { color: var(--accent); font-weight: 700; background: rgba(79,152,163,0.15); border-radius: 3px; padding: 0 2px; }
-    .results-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1rem; }
+    .results-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
     .pass-rate { font-size: 2rem; font-weight: 800; color: var(--pass); }
     .pass-rate.low { color: var(--fail); }
-    .pass-rate.mid { color: #e8af34; }
+    .pass-rate.mid { color: var(--warn); }
+    .metrics-row { display: flex; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .metric { font-size: 0.78rem; color: var(--text-muted); }
+    .metric span { color: var(--text); font-weight: 600; font-family: var(--font); }
+    .metric span.warn { color: var(--warn); }
+    .metric span.bad  { color: var(--fail); }
     .trial-grid { display: flex; flex-wrap: wrap; gap: 6px; }
     .trial-dot {
       width: 28px; height: 28px; border-radius: 4px;
       display: flex; align-items: center; justify-content: center;
       font-size: 0.65rem; font-weight: 700; font-family: var(--font);
-      cursor: default;
+      cursor: default; position: relative;
     }
-    .trial-dot.pass { background: rgba(109,170,69,0.2); color: var(--pass); border: 1px solid rgba(109,170,69,0.3); }
-    .trial-dot.fail { background: rgba(221,105,116,0.2); color: var(--fail); border: 1px solid rgba(221,105,116,0.3); }
+    .trial-dot.pass  { background: rgba(109,170,69,0.2);  color: var(--pass); border: 1px solid rgba(109,170,69,0.3); }
+    .trial-dot.dirty { background: rgba(232,175,52,0.15); color: var(--warn); border: 1px solid rgba(232,175,52,0.4); }
+    .trial-dot.fail  { background: rgba(221,105,116,0.2); color: var(--fail); border: 1px solid rgba(221,105,116,0.3); }
     .trial-dot.pending { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
     .trial-dot.running { background: rgba(79,152,163,0.2); color: var(--accent); border: 1px solid rgba(79,152,163,0.4); animation: pulse 0.8s ease-in-out infinite; }
     @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.4 } }
     .failure-log { margin-top: 1rem; font-family: var(--font); font-size: 0.72rem; color: var(--text-muted); }
     .failure-log .fail-entry { color: var(--fail); margin-bottom: 0.2rem; }
+    .failure-log .dirty-entry { color: var(--warn); margin-bottom: 0.2rem; }
     .full-width { grid-column: 1 / -1; }
     .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 99px; font-size: 0.7rem; font-weight: 600; }
     .tag-accent { background: rgba(79,152,163,0.15); color: var(--accent); border: 1px solid rgba(79,152,163,0.3); }
+    .run-id-label { font-family: var(--font); font-size: 0.68rem; color: var(--text-muted); margin-top: 0.75rem; }
   </style>
 </head>
 <body>
@@ -85,16 +101,16 @@
 
       <label>Skill</label>
       <select id="skillSelect">
-        <option value="weather" data-token="BENCH-weather::4821" data-triggers="what's the weather,current weather,weather forecast">Weather Lookup</option>
-        <option value="translate" data-token="BENCH-translate::7193" data-triggers="translate this,how do you say,in spanish">Language Translation</option>
-        <option value="summarize" data-token="BENCH-summarize::3047" data-triggers="summarize this,tl;dr,key points from">Document Summarizer</option>
-        <option value="calendar" data-token="BENCH-calendar::9562" data-triggers="schedule a meeting,add to my calendar,book an appointment">Calendar Event Creator</option>
-        <option value="search" data-token="BENCH-search::6384" data-triggers="search for,look up,find information about">Web Search</option>
+        <option value="weather"   data-token="BENCH-weather::4821"    data-triggers="what's the weather,current weather,weather forecast">Weather Lookup</option>
+        <option value="translate" data-token="BENCH-translate::7193"  data-triggers="translate this,how do you say,in spanish">Language Translation</option>
+        <option value="summarize" data-token="BENCH-summarize::3047"  data-triggers="summarize this,tl;dr,key points from">Document Summarizer</option>
+        <option value="calendar"  data-token="BENCH-calendar::9562"   data-triggers="schedule a meeting,add to my calendar,book an appointment">Calendar Event Creator</option>
+        <option value="search"    data-token="BENCH-search::6384"     data-triggers="search for,look up,find information about">Web Search</option>
       </select>
 
       <label>Noise Word Count</label>
       <div class="range-row">
-        <input type="range" id="noiseSlider" min="50" max="2000" step="50" value="200">
+        <input type="range" id="noiseSlider" min="50" max="20000" step="50" value="200">
         <span class="range-val" id="noiseVal">200</span>
       </div>
 
@@ -112,7 +128,41 @@
         <option value="end">End</option>
       </select>
 
-      <button id="runBtn">▶ Run Benchmark</button>
+      <label>Provider (label only — for metadata)</label>
+      <select id="providerSelect">
+        <option value="stub">Stub (simulated)</option>
+        <option value="openai">OpenAI</option>
+        <option value="groq">Groq</option>
+        <option value="gemini">Gemini</option>
+        <option value="anthropic">Anthropic</option>
+        <option value="xai">xAI</option>
+        <option value="mistral">Mistral</option>
+        <option value="deepseek">DeepSeek</option>
+        <option value="cerebras">Cerebras</option>
+        <option value="fireworks">Fireworks</option>
+        <option value="sambanova">SambaNova</option>
+      </select>
+
+      <label>Model (label only — for metadata)</label>
+      <select id="modelSelect">
+        <option value="simulated">simulated</option>
+        <option value="gpt-4o">gpt-4o</option>
+        <option value="gpt-4o-mini">gpt-4o-mini</option>
+        <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+        <option value="mixtral-8x7b-32768">mixtral-8x7b-32768</option>
+        <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+        <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+        <option value="claude-3-5-sonnet-latest">claude-3-5-sonnet-latest</option>
+        <option value="claude-3-haiku-20240307">claude-3-haiku-20240307</option>
+        <option value="grok-3">grok-3</option>
+        <option value="grok-3-mini">grok-3-mini</option>
+        <option value="mistral-small-latest">mistral-small-latest</option>
+        <option value="deepseek-chat">deepseek-chat</option>
+        <option value="llama3.1-70b">llama3.1-70b (Cerebras)</option>
+        <option value="Meta-Llama-3.1-405B-Instruct">Meta-Llama-3.1-405B (SambaNova)</option>
+      </select>
+
+      <button class="btn btn-primary" id="runBtn">▶ Run Benchmark</button>
     </div>
 
     <!-- Haystack Preview -->
@@ -128,8 +178,17 @@
         <div class="pass-rate" id="passRateDisplay">—</div>
         <div style="color: var(--text-muted); font-size: 0.85rem;" id="passRateLabel">pass rate</div>
       </div>
+      <div class="metrics-row" id="metricsRow"></div>
       <div class="trial-grid" id="trialGrid"></div>
       <div class="failure-log" id="failureLog"></div>
+      <div class="run-id-label" id="runIdLabel"></div>
+
+      <!-- Export buttons — hidden until run completes -->
+      <div class="export-row" id="exportRow" style="display:none;">
+        <button class="btn btn-csv"  id="downloadCsv">⬇ Download CSV</button>
+        <button class="btn btn-md"   id="downloadMd">⬇ Download .md</button>
+        <button class="btn btn-json" id="downloadJson">⬇ Download JSON</button>
+      </div>
     </div>
   </div>
 
@@ -146,21 +205,29 @@
       'always','never','often','since','still','yet','today','tomorrow','yesterday','now',
     ];
 
-    const noiseSlider = document.getElementById('noiseSlider');
-    const noiseVal = document.getElementById('noiseVal');
-    const trialsSlider = document.getElementById('trialsSlider');
-    const trialsVal = document.getElementById('trialsVal');
-    const skillSelect = document.getElementById('skillSelect');
+    const noiseSlider    = document.getElementById('noiseSlider');
+    const noiseVal       = document.getElementById('noiseVal');
+    const trialsSlider   = document.getElementById('trialsSlider');
+    const trialsVal      = document.getElementById('trialsVal');
+    const skillSelect    = document.getElementById('skillSelect');
     const positionSelect = document.getElementById('positionSelect');
-    const runBtn = document.getElementById('runBtn');
-    const haystackPreview = document.getElementById('haystackPreview');
-    const previewTag = document.getElementById('previewTag');
-    const trialGrid = document.getElementById('trialGrid');
-    const passRateDisplay = document.getElementById('passRateDisplay');
-    const passRateLabel = document.getElementById('passRateLabel');
-    const failureLog = document.getElementById('failureLog');
+    const providerSelect = document.getElementById('providerSelect');
+    const modelSelect    = document.getElementById('modelSelect');
+    const runBtn         = document.getElementById('runBtn');
+    const haystackPreview= document.getElementById('haystackPreview');
+    const previewTag     = document.getElementById('previewTag');
+    const trialGrid      = document.getElementById('trialGrid');
+    const passRateDisplay= document.getElementById('passRateDisplay');
+    const passRateLabel  = document.getElementById('passRateLabel');
+    const metricsRow     = document.getElementById('metricsRow');
+    const failureLog     = document.getElementById('failureLog');
+    const runIdLabel     = document.getElementById('runIdLabel');
+    const exportRow      = document.getElementById('exportRow');
+    const downloadCsv    = document.getElementById('downloadCsv');
+    const downloadMd     = document.getElementById('downloadMd');
+    const downloadJson   = document.getElementById('downloadJson');
 
-    noiseSlider.addEventListener('input', () => { noiseVal.textContent = noiseSlider.value; updatePreview(); });
+    noiseSlider.addEventListener('input',  () => { noiseVal.textContent  = noiseSlider.value;  updatePreview(); });
     trialsSlider.addEventListener('input', () => { trialsVal.textContent = trialsSlider.value; });
     skillSelect.addEventListener('change', updatePreview);
     positionSelect.addEventListener('change', updatePreview);
@@ -175,20 +242,18 @@
 
     function buildHaystack(noiseCount, position, trigger) {
       const noise = Array.from({ length: noiseCount }, randomWord);
-      let idx;
       const pos = position === 'random' ? ['start','middle','end'][Math.floor(Math.random()*3)] : position;
+      let idx;
       if (pos === 'start') idx = 0;
       else if (pos === 'end') idx = noise.length;
       else idx = Math.floor(noise.length / 2);
       noise.splice(idx, 0, '[[TRIGGER]]');
-      return { words: noise, triggerIdx: idx, trigger };
+      return { words: noise, pos, trigger };
     }
 
-    function renderHaystack({ words, triggerIdx, trigger }) {
-      return words.map((w, i) =>
-        w === '[[TRIGGER]]'
-          ? `<span class="trigger">${trigger}</span>`
-          : w
+    function renderHaystack({ words, trigger }) {
+      return words.map(w =>
+        w === '[[TRIGGER]]' ? `<span class="trigger">${trigger}</span>` : w
       ).join(' ') + '.';
     }
 
@@ -197,35 +262,60 @@
       const trigger = getTriggerPhrase();
       const h = buildHaystack(n, positionSelect.value, trigger);
       haystackPreview.innerHTML = renderHaystack(h);
-      previewTag.textContent = `${n} words`;
+      previewTag.textContent = `${n.toLocaleString()} words`;
     }
 
     updatePreview();
 
-    // Simulated trial runner (swap callLLM for real API)
-    async function simulateTrial(token, passRate = 0.9) {
-      await new Promise(r => setTimeout(r, 80 + Math.random() * 200));
-      const pass = Math.random() < passRate;
+    // -------------------------------------------------------------------------
+    // Simulated trial (swap for real LLM call)
+    // -------------------------------------------------------------------------
+    async function simulateTrial(token) {
+      await new Promise(r => setTimeout(r, 60 + Math.random() * 160));
+      const pass = Math.random() < 0.9;
+      const dirty = pass && Math.random() < 0.08;
       const failModes = ['token_absent', 'wrong_token', 'malformed_token'];
       return {
-        pass,
+        pass: pass && !dirty ? true : pass,
+        dirty,
+        precision: pass ? (dirty ? 0.3 + Math.random() * 0.4 : 0.85 + Math.random() * 0.15) : 0,
         failureMode: pass ? null : failModes[Math.floor(Math.random() * failModes.length)],
       };
     }
 
+    // -------------------------------------------------------------------------
+    // State for last completed run (used for export)
+    // -------------------------------------------------------------------------
+    let lastRun = null;
+
+    // -------------------------------------------------------------------------
+    // Run benchmark
+    // -------------------------------------------------------------------------
     runBtn.addEventListener('click', async () => {
-      const trials = parseInt(trialsSlider.value);
+      const trials     = parseInt(trialsSlider.value);
       const noiseCount = parseInt(noiseSlider.value);
-      const opt = skillSelect.options[skillSelect.selectedIndex];
-      const token = opt.dataset.token;
+      const opt        = skillSelect.options[skillSelect.selectedIndex];
+      const token      = opt.dataset.token;
+      const skillId    = opt.value;
+      const skillName  = opt.textContent.trim();
+      const provider   = providerSelect.value;
+      const model      = modelSelect.value;
+      const runId      = new Date().toISOString();
 
       runBtn.disabled = true;
+      exportRow.style.display = 'none';
       trialGrid.innerHTML = '';
       failureLog.innerHTML = '';
+      metricsRow.innerHTML = '';
       passRateDisplay.textContent = '—';
       passRateLabel.textContent = 'running...';
+      runIdLabel.textContent = '';
 
-      // Build pending dots
+      const trigger = getTriggerPhrase();
+      const h = buildHaystack(noiseCount, positionSelect.value, trigger);
+      haystackPreview.innerHTML = renderHaystack(h);
+
+      // Pending dots
       const dots = [];
       for (let i = 0; i < trials; i++) {
         const dot = document.createElement('div');
@@ -235,21 +325,33 @@
         dots.push(dot);
       }
 
-      // Show a haystack for this run
-      const trigger = getTriggerPhrase();
-      const h = buildHaystack(noiseCount, positionSelect.value, trigger);
-      haystackPreview.innerHTML = renderHaystack(h);
-
-      let passes = 0;
-      const failures = [];
+      let passes = 0, dirtyPasses = 0, dirtyFails = 0;
+      let precisionSum = 0;
+      const trialLog = [];
+      const failures = [], dirties = [];
 
       for (let i = 0; i < trials; i++) {
         dots[i].className = 'trial-dot running';
-        const { pass, failureMode } = await simulateTrial(token);
-        dots[i].className = `trial-dot ${pass ? 'pass' : 'fail'}`;
-        dots[i].title = pass ? 'PASS' : failureMode;
+        const { pass, dirty, precision, failureMode } = await simulateTrial(token);
+
+        let dotClass = pass ? (dirty ? 'dirty' : 'pass') : 'fail';
+        dots[i].className = `trial-dot ${dotClass}`;
+        dots[i].title = pass ? (dirty ? '⚠ DIRTY PASS' : 'PASS') : failureMode;
+
         if (pass) passes++;
-        else failures.push({ trial: i + 1, failureMode });
+        if (dirty && pass)  { dirtyPasses++; dirties.push({ trial: i + 1 }); }
+        if (dirty && !pass) { dirtyFails++; }
+        if (!pass) failures.push({ trial: i + 1, failureMode });
+        precisionSum += precision;
+
+        trialLog.push({
+          trial: i + 1,
+          pass,
+          dirty,
+          precision: Math.round(precision * 1000) / 1000,
+          failureMode: failureMode ?? null,
+          triggerPosition: h.pos,
+        });
 
         const rate = passes / (i + 1);
         passRateDisplay.textContent = `${(rate * 100).toFixed(0)}%`;
@@ -257,12 +359,180 @@
         passRateLabel.textContent = `${passes}/${i + 1} trials passed`;
       }
 
-      if (failures.length > 0) {
-        failureLog.innerHTML = '<div style="margin-bottom:0.5rem; color: var(--text-muted)">Failure log:</div>' +
-          failures.map(f => `<div class="fail-entry">Trial ${String(f.trial).padStart(2,'0')}: ${f.failureMode}</div>`).join('');
-      }
+      const passRate = passes / trials;
+      const avgPrecision = precisionSum / trials;
+      const contaminationRate = (dirtyPasses + dirtyFails) / trials;
 
+      // Metrics row
+      metricsRow.innerHTML = `
+        <div class="metric">Avg Precision <span>${(avgPrecision * 100).toFixed(1)}%</span></div>
+        <div class="metric">Contamination <span class="${contaminationRate > 0.1 ? 'warn' : ''}">${(contaminationRate * 100).toFixed(1)}%</span></div>
+        <div class="metric">Dirty Passes <span class="${dirtyPasses > 0 ? 'warn' : ''}">${dirtyPasses}</span></div>
+        <div class="metric">Dirty Fails <span class="${dirtyFails > 0 ? 'bad' : ''}">${dirtyFails}</span></div>
+        <div class="metric">Noise Words <span>${noiseCount.toLocaleString()}</span></div>
+        <div class="metric">Scoring <span>v6</span></div>
+      `;
+
+      // Failure / dirty log
+      let logHtml = '';
+      if (dirties.length)  logHtml += '<div style="margin-bottom:0.4rem;color:var(--text-muted)">Dirty outputs (⚠ contaminated):</div>' + dirties.map(d => `<div class="dirty-entry">Trial ${String(d.trial).padStart(2,'0')}: correct token present + trailing noise</div>`).join('');
+      if (failures.length) logHtml += (dirties.length ? '<div style="margin:0.5rem 0 0.4rem;color:var(--text-muted)">Failures:</div>' : '<div style="margin-bottom:0.4rem;color:var(--text-muted)">Failures:</div>') + failures.map(f => `<div class="fail-entry">Trial ${String(f.trial).padStart(2,'0')}: ${f.failureMode}</div>`).join('');
+      failureLog.innerHTML = logHtml;
+
+      runIdLabel.textContent = `Run ID: ${runId}`;
+
+      // Save run data for export
+      lastRun = {
+        run_id: runId,
+        scoring_version: 'v6',
+        provider,
+        model,
+        skill_id: skillId,
+        skill_name: skillName,
+        token,
+        trigger_phrase: trigger,
+        noise_words: noiseCount,
+        trigger_position_config: positionSelect.value,
+        trials,
+        passes,
+        fails: trials - passes,
+        pass_rate: passRate,
+        avg_precision: avgPrecision,
+        contamination_rate: contaminationRate,
+        dirty_pass_count: dirtyPasses,
+        dirty_fail_count: dirtyFails,
+        trial_log: trialLog,
+      };
+
+      exportRow.style.display = 'flex';
       runBtn.disabled = false;
+    });
+
+    // -------------------------------------------------------------------------
+    // Export helpers
+    // -------------------------------------------------------------------------
+    function triggerDownload(filename, content, mime) {
+      const blob = new Blob([content], { type: mime });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function safeFilename(runId, ext) {
+      return `skill-haystack_${runId.replace(/[:.]/g, '-')}.${ext}`;
+    }
+
+    // --- CSV ---
+    downloadCsv.addEventListener('click', () => {
+      if (!lastRun) return;
+      const r = lastRun;
+      const header = [
+        'run_id','scoring_version','provider','model','skill_id','skill_name','token',
+        'trigger_phrase','noise_words','trigger_position_config','trials',
+        'passes','fails','pass_rate','avg_precision','contamination_rate',
+        'dirty_pass_count','dirty_fail_count'
+      ];
+      const meta = header.map(k => {
+        const v = r[k];
+        return typeof v === 'number' ? v : `"${String(v).replace(/"/g,'""')}"`;
+      });
+
+      const trialHeader = 'trial,pass,dirty,precision,failure_mode,trigger_position';
+      const trialRows = r.trial_log.map(t =>
+        `${t.trial},${t.pass},${t.dirty},${t.precision},${t.failureMode ?? ''},${t.triggerPosition}`
+      );
+
+      const csv = [
+        '# Skill-Haystack Results — Run Summary',
+        header.join(','),
+        meta.join(','),
+        '',
+        '# Trial Log',
+        trialHeader,
+        ...trialRows,
+      ].join('\n');
+
+      triggerDownload(safeFilename(r.run_id, 'csv'), csv, 'text/csv');
+    });
+
+    // --- Markdown ---
+    downloadMd.addEventListener('click', () => {
+      if (!lastRun) return;
+      const r = lastRun;
+      const pct = v => `${(v * 100).toFixed(1)}%`;
+      const ts = new Date(r.run_id).toLocaleString();
+
+      const trialRows = r.trial_log.map(t => {
+        const status = t.pass ? (t.dirty ? '⚠ dirty' : '✅ pass') : '❌ fail';
+        return `| ${String(t.trial).padStart(2,'0')} | ${status} | ${pct(t.precision)} | ${t.triggerPosition} | ${t.failureMode ?? '—'} |`;
+      });
+
+      const md = `# Skill-Haystack Run Report
+
+**Run ID:** \`${r.run_id}\`  
+**Timestamp:** ${ts}  
+**Scoring Version:** ${r.scoring_version}
+
+---
+
+## Configuration
+
+| Field | Value |
+|---|---|
+| Provider | \`${r.provider}\` |
+| Model | \`${r.model}\` |
+| Skill | ${r.skill_name} (\`${r.skill_id}\`) |
+| Token | \`${r.token}\` |
+| Trigger Phrase | \`${r.trigger_phrase}\` |
+| Noise Words | ${r.noise_words.toLocaleString()} |
+| Trigger Position | ${r.trigger_position_config} |
+| Trials | ${r.trials} |
+
+---
+
+## Results Summary
+
+| Metric | Value |
+|---|---|
+| **Pass Rate (Fidelity)** | **${pct(r.pass_rate)}** (${r.passes}/${r.trials}) |
+| Avg Precision | ${pct(r.avg_precision)} |
+| Contamination Rate | ${pct(r.contamination_rate)} |
+| Dirty Passes | ${r.dirty_pass_count} |
+| Dirty Fails | ${r.dirty_fail_count} |
+| Total Failures | ${r.fails} |
+
+> **Scoring v6 notes:**  
+> - Fidelity: BENCH tokens use \`includes()\`; exact-value skills require strict equality (trailing noise = fail)  
+> - Precision: \`max(0, 1 - extraChars / expectedLen)\` — anchored to expected length  
+> - Dirty = correct value present but output contaminated with trailing noise  
+> - Contamination rate = (dirty_pass + dirty_fail) / trials
+
+---
+
+## Trial Log
+
+| Trial | Result | Precision | Position | Failure Mode |
+|---|---|---|---|---|
+${trialRows.join('\n')}
+
+---
+
+*Generated by [Skill-Haystack](https://github.com/nothinginfinity/Skill-Haystack)*
+`;
+
+      triggerDownload(safeFilename(r.run_id, 'md'), md, 'text/markdown');
+    });
+
+    // --- JSON ---
+    downloadJson.addEventListener('click', () => {
+      if (!lastRun) return;
+      triggerDownload(
+        safeFilename(lastRun.run_id, 'json'),
+        JSON.stringify(lastRun, null, 2),
+        'application/json'
+      );
     });
   </script>
 </body>
