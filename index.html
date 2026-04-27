@@ -19,6 +19,7 @@
   --fail:#dd6974; --fail-dim:rgba(221,105,116,0.15); --fail-border:rgba(221,105,116,0.3);
   --gold:#e8af34; --gold-dim:rgba(232,175,52,0.15); --gold-border:rgba(232,175,52,0.3);
   --purple:#a86fdf; --purple-dim:rgba(168,111,223,0.15); --purple-border:rgba(168,111,223,0.3);
+  --blue:#5591c7; --blue-dim:rgba(85,145,199,0.15); --blue-border:rgba(85,145,199,0.3);
   --font:'Satoshi',system-ui,sans-serif;
   --mono:'JetBrains Mono','Fira Code',monospace;
   --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:18px; --r-full:999px;
@@ -122,13 +123,18 @@ select:focus{border-color:var(--primary);outline:none}
   font-size:12px;color:var(--text-muted);line-height:1.6;
 }
 .multi-skill-banner strong{color:var(--gold);font-weight:700}
-.decoy-list{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
-.decoy-tag{
-  font-size:10px;font-family:var(--mono);padding:2px 7px;
-  border-radius:var(--r-full);background:var(--surface-3);
-  border:1px solid var(--border);color:var(--text-faint);
+.multi-sub{font-size:11px;color:var(--text-faint);margin-top:4px}
+.skill-check-list{margin-top:8px;display:flex;flex-direction:column;gap:5px}
+.skill-check{
+  display:flex;align-items:center;gap:8px;font-size:12px;
+  background:var(--surface-3);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:7px 10px;cursor:pointer;
+  transition:border-color 0.15s;
 }
-.decoy-tag.target{background:var(--primary-dim);border-color:var(--primary-border);color:var(--primary)}
+.skill-check input[type=checkbox]{accent-color:var(--primary);width:14px;height:14px;cursor:pointer}
+.skill-check.checked{border-color:var(--primary-border);background:var(--primary-dim)}
+.skill-check-label{flex:1;color:var(--text)}
+.skill-check-token{font-family:var(--mono);font-size:10px;color:var(--text-faint)}
 .haystack-box{
   background:var(--surface-2);border:1px solid var(--border);
   border-radius:var(--r-md);padding:12px;
@@ -183,6 +189,23 @@ select:focus{border-color:var(--primary);outline:none}
 .score-fill.precision.mid{background:var(--gold)}
 .score-fill.precision.low{background:var(--fail)}
 .score-sub{font-size:10px;color:var(--text-faint);margin-top:4px}
+/* multi-skill per-skill breakdown */
+.multi-breakdown{
+  margin-bottom:12px;
+}
+.multi-breakdown-title{
+  font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-faint);
+  margin-bottom:6px;font-weight:700;
+}
+.skill-score-row{
+  display:flex;align-items:center;gap:8px;margin-bottom:5px;
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:6px 10px;
+}
+.skill-score-name{font-size:11px;color:var(--text-muted);flex:1}
+.skill-score-bar{flex:2;height:4px;background:var(--surface-3);border-radius:var(--r-full);overflow:hidden}
+.skill-score-fill{height:100%;border-radius:var(--r-full);transition:width 0.4s ease}
+.skill-score-pct{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;min-width:36px;text-align:right}
 /* legend */
 .legend-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .legend-item{
@@ -232,7 +255,6 @@ select:focus{border-color:var(--primary);outline:none}
   color:var(--gold);border-color:var(--gold-border);
 }
 .dot.fail{background:var(--fail-dim);color:var(--fail);border-color:var(--fail-border)}
-/* contamination pip */
 .dot .pip{
   position:absolute;top:2px;right:2px;
   width:5px;height:5px;border-radius:50%;
@@ -261,6 +283,21 @@ select:focus{border-color:var(--primary);outline:none}
 .out-text .clean-part{color:var(--pass)}
 .out-text .dirty-part{color:var(--fail);text-decoration:underline wavy var(--fail)}
 .out-text.err{color:var(--fail);font-size:10px}
+/* export buttons */
+.export-row{
+  display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;
+}
+.export-row .export-btn{
+  flex:1;min-width:90px;
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  padding:9px 10px;border-radius:var(--r-md);
+  font-size:12px;font-weight:700;cursor:pointer;transition:opacity 0.15s;
+  border:1px solid;
+}
+.export-btn:hover{opacity:0.8}
+.export-btn.csv {background:#1e2d1e;color:var(--pass);border-color:var(--pass-border)}
+.export-btn.md  {background:#1e1e2d;color:var(--blue);border-color:var(--blue-border)}
+.export-btn.json{background:#2a241a;color:var(--gold);border-color:var(--gold-border)}
 /* misc */
 .empty{display:flex;flex-direction:column;align-items:center;padding:32px 16px;color:var(--text-faint);text-align:center;gap:10px}
 .empty svg{opacity:0.3}
@@ -298,6 +335,7 @@ select:focus{border-color:var(--primary);outline:none}
 }
 .tab-btn.active{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
 .tab-btn:active{opacity:0.7}
+.run-id-label{font-size:10px;color:var(--text-faint);font-family:var(--mono);margin-top:8px}
 [data-theme="light"] {
   --bg:#f7f6f2; --surface:#f9f8f5; --surface-2:#f3f0ec; --surface-3:#e6e4df;
   --border:rgba(0,0,0,0.07); --border-med:rgba(0,0,0,0.12);
@@ -314,7 +352,7 @@ select:focus{border-color:var(--primary);outline:none}
         <path d="M3 13 L8 3 L13 13" stroke="#4f98a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
       </svg>
     </div>
-    <span class="logo-name">Skill-Haystack <span class="logo-version">v5</span></span>
+    <span class="logo-name">Skill-Haystack <span class="logo-version">v6</span></span>
   </div>
   <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
     <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -336,14 +374,17 @@ select:focus{border-color:var(--primary);outline:none}
           <button class="tab-btn" id="tabMulti" onclick="setHaystackMode('multi')">Multi-Skill</button>
         </div>
       </div>
-      <div class="field">
-        <label class="field-label" id="skillLabel">Skill</label>
+
+      <!-- SINGLE SKILL -->
+      <div id="singleSkillField" class="field">
+        <label class="field-label">Skill</label>
         <div class="select-wrap">
           <select id="skillSelect" onchange="onSkillChange()">
-            <optgroup label="— Benchmark Skills (Fidelity Scored) —">
+            <optgroup label="— Fidelity Skills —">
               <option value="pi">Pi Digits (3.14159265358979)</option>
+              <option value="prime">Long Prime ⚠ Degrades Fast</option>
               <option value="mary">Mary Had a Little Lamb</option>
-              <option value="nato">NATO Phonetic Alphabet (A–J)</option>
+              <option value="nato">NATO Alphabet (A–J)</option>
             </optgroup>
             <optgroup label="— Token Skills (Pass/Fail) —">
               <option value="weather">Weather Lookup</option>
@@ -352,16 +393,16 @@ select:focus{border-color:var(--primary);outline:none}
             </optgroup>
           </select>
         </div>
+        <div id="skillInfoBox" class="skill-info" style="margin-top:10px"></div>
       </div>
-      <div id="skillInfoBox" class="skill-info"></div>
-      <div class="field" id="decoyField" style="display:none">
-        <label class="field-label">Competing Skills (decoys buried alongside target)</label>
-        <div class="slider-row">
-          <input type="range" id="decoySlider" min="1" max="9" step="1" value="4">
-          <span class="slider-val" id="decoyVal">4</span>
-        </div>
+
+      <!-- MULTI SKILL -->
+      <div id="multiSkillField" class="field" style="display:none">
+        <label class="field-label">Skills to test <span style="color:var(--text-faint);font-weight:400">(all are called per trial)</span></label>
+        <div class="skill-check-list" id="skillCheckList"></div>
+        <div id="multiSkillBanner" style="margin-top:10px"></div>
       </div>
-      <div id="multiSkillBanner" style="display:none"></div>
+
       <div class="field">
         <label class="field-label">
           Noise Words
@@ -371,7 +412,7 @@ select:focus{border-color:var(--primary);outline:none}
           <input type="range" id="noiseSlider" min="0" max="50" step="1" value="0">
           <span class="slider-val" id="noiseVal">0</span>
         </div>
-        <div style="font-size:11px;color:var(--text-faint);margin-top:4px">Drag right to increase noise depth (up to 20 000 words)</div>
+        <div style="font-size:11px;color:var(--text-faint);margin-top:4px">Drag right to increase noise depth (up to 20 000 words)</div>
       </div>
       <div class="field">
         <label class="field-label">Trials</label>
@@ -464,17 +505,18 @@ function setMode(m) {
   document.getElementById('modeLiveBtn').classList.toggle('active', m === 'live');
   document.getElementById('liveFields').style.display = m === 'live' ? 'block' : 'none';
 }
+
 let haystackMode = 'single';
 function setHaystackMode(m) {
   haystackMode = m;
   document.getElementById('tabSingle').classList.toggle('active', m === 'single');
   document.getElementById('tabMulti').classList.toggle('active', m === 'multi');
-  document.getElementById('decoyField').style.display = m === 'multi' ? 'block' : 'none';
-  document.getElementById('skillLabel').textContent = m === 'multi' ? 'Target Skill' : 'Skill';
-  updateMultiBanner(); updatePreview();
+  document.getElementById('singleSkillField').style.display = m === 'single' ? 'block' : 'none';
+  document.getElementById('multiSkillField').style.display = m === 'multi' ? 'block' : 'none';
+  updatePreview();
 }
 
-// ── Noise slider ──
+// ── Noise slider (log-ish scale) ──
 function sliderToNoise(v) {
   v = parseInt(v);
   if (v === 0) return 0;
@@ -492,8 +534,6 @@ const noiseSlider  = document.getElementById('noiseSlider');
 const noiseValEl   = document.getElementById('noiseVal');
 const trialsSlider = document.getElementById('trialsSlider');
 const trialsVal    = document.getElementById('trialsVal');
-const decoySlider  = document.getElementById('decoySlider');
-const decoyValEl   = document.getElementById('decoyVal');
 noiseSlider.addEventListener('input', () => {
   const n = sliderToNoise(noiseSlider.value);
   noiseValEl.textContent = noiseLabel(n);
@@ -501,7 +541,6 @@ noiseSlider.addEventListener('input', () => {
   updatePreview();
 });
 trialsSlider.addEventListener('input', () => { trialsVal.textContent = trialsSlider.value; });
-decoySlider.addEventListener('input',  () => { decoyValEl.textContent = decoySlider.value; updateMultiBanner(); updatePreview(); });
 document.getElementById('positionSelect').addEventListener('change', updatePreview);
 
 // ── Skills ──
@@ -514,6 +553,25 @@ const SKILLS = {
     scoreContent(output) {
       const exp = '3.14159265358979';
       const clean = output.trim().replace(/[^0-9.]/g,'');
+      let correct = 0;
+      for (let i = 0; i < Math.min(clean.length, exp.length); i++) {
+        if (clean[i] === exp[i]) correct++; else break;
+      }
+      return { fidelity: correct / exp.length, correct, total: exp.length };
+    }
+  },
+  // ── DEGRADATION SKILL: long 30-digit prime ──
+  // Models ace this at zero noise (it's in the system prompt verbatim).
+  // At high noise (5k+) they truncate, hallucinate digits, or drop it entirely.
+  // This gives a clear degradation curve — use this to show the benchmark works.
+  prime: {
+    name:'Long Prime (30 digits)', type:'fidelity', trigger:'emit the prime number',
+    system:'You are a skill executor. When the user says "emit the prime number", respond with ONLY this exact number and nothing else: 357686312646216567629137',
+    expected:'357686312646216567629137',
+    description:'⚠ Degrades fast. Emit exact 24-digit prime. Models nail at 0 noise, fail by 5k words. Great for calibration.',
+    scoreContent(output) {
+      const exp = '357686312646216567629137';
+      const clean = output.trim().replace(/[^0-9]/g,'');
       let correct = 0;
       for (let i = 0; i < Math.min(clean.length, exp.length); i++) {
         if (clean[i] === exp[i]) correct++; else break;
@@ -569,96 +627,44 @@ const SKILLS = {
   }
 };
 
-// ── PRECISION scoring ──
-// Measures output cleanliness: does the output contain ONLY the expected content?
-// 1.0 = exact match, <1.0 = contaminated with trailing/extra content
-// Formula: precision = expectedLen / max(outputLen, expectedLen)
-// i.e., penalised proportionally by how much extra junk was added
-function scorePrecision(output, expected) {
-  const trimmed = output.trim();
-  const expNorm = expected.trim();
-  if (trimmed === expNorm) return 1.0;
-  if (trimmed.length === 0) return 0.0;
-  // Check if expected is a prefix of the output (contamination case)
-  if (trimmed.startsWith(expNorm)) {
-    // Penalise by ratio of extra content to total output length
-    const extra = trimmed.length - expNorm.length;
-    return Math.max(0, 1 - (extra / trimmed.length));
-  }
-  // Check partial prefix match (both content missing AND contaminated)
-  const overlapLen = longestCommonPrefix(trimmed, expNorm);
-  if (overlapLen > 0) {
-    return (overlapLen / Math.max(trimmed.length, expNorm.length)) * 0.5;
-  }
-  return 0.0;
+// Default multi-skill selection: pi + mary + nato
+const MULTI_SKILL_KEYS = ['pi','prime','mary','nato','weather','translate','summarize'];
+const MULTI_DEFAULT    = new Set(['pi','mary','nato']);
+let   multiSelected    = new Set(MULTI_DEFAULT);
+
+function buildMultiSkillChecks() {
+  const list = document.getElementById('skillCheckList');
+  list.innerHTML = '';
+  MULTI_SKILL_KEYS.forEach(k => {
+    const s = SKILLS[k];
+    const checked = multiSelected.has(k);
+    const row = document.createElement('label');
+    row.className = 'skill-check' + (checked ? ' checked' : '');
+    row.innerHTML = `
+      <input type="checkbox" ${checked ? 'checked' : ''} data-key="${k}">
+      <span class="skill-check-label">${s.name}</span>
+      <span class="skill-check-token">${s.expected.substring(0,20)}${s.expected.length>20?'…':''}</span>`;
+    row.querySelector('input').addEventListener('change', e => {
+      if (e.target.checked) multiSelected.add(k); else multiSelected.delete(k);
+      row.classList.toggle('checked', e.target.checked);
+      updateMultiBanner(); updatePreview();
+    });
+    list.appendChild(row);
+  });
 }
 
-function longestCommonPrefix(a, b) {
-  let i = 0;
-  while (i < a.length && i < b.length && a[i] === b[i]) i++;
-  return i;
+function getMultiSkills() {
+  return [...multiSelected].map(k => SKILLS[k]);
 }
 
-// Returns split of output into clean + dirty parts for display
-function splitCleanDirty(output, expected) {
-  const trimmed = output.trim();
-  const expNorm = expected.trim();
-  if (trimmed === expNorm) return { clean: trimmed, dirty: '' };
-  if (trimmed.startsWith(expNorm)) {
-    return { clean: expNorm, dirty: trimmed.substring(expNorm.length) };
-  }
-  const overlap = longestCommonPrefix(trimmed, expNorm);
-  return { clean: trimmed.substring(0, overlap), dirty: trimmed.substring(overlap) };
-}
-
-// ── Full score ── combines fidelity + precision
-function fullScore(skill, rawOutput) {
-  const content = skill.scoreContent(rawOutput);
-  const precision = scorePrecision(rawOutput, skill.expected);
-  const split = splitCleanDirty(rawOutput, skill.expected);
-  const contaminated = rawOutput.trim() !== skill.expected.trim() && rawOutput.trim().length > 0;
-  return {
-    fidelity: content.fidelity,
-    precision,
-    correct: content.correct,
-    total: content.total,
-    contaminated,
-    clean: split.clean,
-    dirty: split.dirty,
-    output: rawOutput,
-    display: rawOutput.trim().substring(0, 60) + (rawOutput.trim().length > 60 ? '…' : '')
-  };
-}
-
-const SKILL_KEYS = Object.keys(SKILLS);
-function currentSkill()    { return SKILLS[document.getElementById('skillSelect').value]; }
-function currentSkillKey() { return document.getElementById('skillSelect').value; }
-function onSkillChange()   { updateSkillInfo(); updateMultiBanner(); updatePreview(); }
-
-function updateSkillInfo() {
-  const s = currentSkill();
-  document.getElementById('skillInfoBox').innerHTML =
-    `<div class="skill-info-name">${s.name}</div>
-     <div class="skill-info-desc">${s.description}</div>
-     <div class="skill-info-expected">${esc(s.expected.replace(/\n/g,' · '))}</div>`;
-}
-
-function getDecoyKeys() {
-  const target = currentSkillKey();
-  return SKILL_KEYS.filter(k => k !== target).slice(0, parseInt(decoySlider.value));
-}
 function updateMultiBanner() {
   const banner = document.getElementById('multiSkillBanner');
-  if (haystackMode !== 'multi') { banner.style.display='none'; return; }
-  banner.style.display='block';
-  const target = currentSkill();
-  const decoys = getDecoyKeys().map(k=>SKILLS[k]);
+  const skills = getMultiSkills();
+  if (!skills.length) { banner.innerHTML = ''; return; }
   banner.innerHTML = `<div class="multi-skill-banner">
-    <strong>${decoys.length+1} skills buried.</strong> Target: <strong style="color:var(--primary)">${target.name}</strong> + ${decoys.length} decoy${decoys.length>1?'s':''}.
-    <div class="decoy-list">
-      <span class="decoy-tag target">● ${target.name}</span>
-      ${decoys.map(d=>`<span class="decoy-tag">○ ${d.name}</span>`).join('')}
-    </div></div>`;
+    <strong>${skills.length} skills will be called per trial.</strong> Each gets its own system instruction in a combined prompt — the model must respond to all ${skills.length} triggers in one output.<br>
+    <span class="multi-sub">Fidelity and precision are scored per-skill and averaged.</span>
+  </div>`;
 }
 
 // ── Noise words ──
@@ -695,158 +701,279 @@ function buildHaystackWords(noiseCount, position, insertions) {
   return words;
 }
 
-function updatePreview() {
-  const noiseCount = sliderToNoise(noiseSlider.value);
-  const skill = currentSkill();
-  const isMulti = haystackMode === 'multi';
-  if (noiseCount === 0) {
-    document.getElementById('haystackPreview').innerHTML = `<span class="trigger">${esc(skill.trigger)}</span>`;
-    document.getElementById('previewMeta').textContent = 'Zero-noise baseline — skill instruction in system prompt, trigger in user message';
-    return;
-  }
-  let words;
-  if (isMulti) {
-    const decoys = getDecoyKeys();
-    const insertions = ['__TARGET__', ...decoys.map(k=>'__DECOY_'+k+'__')];
-    words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, insertions);
-    const html = words.map(w => {
-      if (w==='__TARGET__') return `<span class="trigger">[TARGET: ${esc(skill.name)}]</span>`;
-      if (w.startsWith('__DECOY_')) { const k=w.replace('__DECOY_','').replace('__',''); return `<span class="decoy">[DECOY: ${esc(SKILLS[k]?.name||k)}]</span>`; }
-      return esc(w);
-    }).join(' ');
-    document.getElementById('haystackPreview').innerHTML = html;
-    document.getElementById('previewMeta').textContent = `${noiseLabel(noiseCount)} noise words · 1 target + ${decoys.length} decoy skill${decoys.length>1?'s':''}`;
-  } else {
-    words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, ['__SKILL__']);
-    document.getElementById('haystackPreview').innerHTML = words.map(w => w==='__SKILL__' ? `<span class="trigger">[SKILL INSTRUCTION]</span>` : esc(w)).join(' ');
-    document.getElementById('previewMeta').textContent = `${noiseLabel(noiseCount)} noise words · 1 skill buried`;
-  }
+function onSkillChange() { updateSkillInfo(); updatePreview(); }
+function currentSkill()  { return SKILLS[document.getElementById('skillSelect').value]; }
+function updateSkillInfo() {
+  const s = currentSkill();
+  document.getElementById('skillInfoBox').innerHTML =
+    `<div class="skill-info-name">${s.name}</div>
+     <div class="skill-info-desc">${s.description}</div>
+     <div class="skill-info-expected">${esc(s.expected.replace(/\n/g,' · '))}</div>`;
 }
 
-// ── Message builder ──
-function buildMessages(skill, noiseCount) {
-  const isMulti = haystackMode === 'multi';
-  if (noiseCount === 0) {
-    let sys = skill.system;
-    if (isMulti) {
-      const decoys = getDecoyKeys().map(k=>SKILLS[k]);
-      sys = `You are a skill router. Multiple skill instructions are provided. Match the trigger to the correct one and execute ONLY that skill. Output only what the skill specifies.
-
-${decoys.map(d=>d.system).join('\n')}\n\n${skill.system}`;
+function updatePreview() {
+  const noiseCount = sliderToNoise(noiseSlider.value);
+  const pos = document.getElementById('positionSelect').value;
+  if (haystackMode === 'multi') {
+    const skills = getMultiSkills();
+    if (!skills.length) { document.getElementById('haystackPreview').textContent = 'Select at least one skill above.'; return; }
+    if (noiseCount === 0) {
+      document.getElementById('haystackPreview').innerHTML = skills.map(s=>`<span class="trigger">[${esc(s.trigger)}]</span>`).join(' + ');
+      document.getElementById('previewMeta').textContent = `Zero-noise baseline — ${skills.length} triggers fired in one user message`;
+      return;
     }
-    return [{ role:'system', content:sys }, { role:'user', content:skill.trigger }];
+    const insertions = skills.map((_,i)=>'__SKILL_'+i+'__');
+    const words = buildHaystackWords(noiseCount, pos, insertions);
+    document.getElementById('haystackPreview').innerHTML = words.map(w => {
+      const idx = insertions.indexOf(w);
+      return idx>=0 ? `<span class="trigger">[SKILL: ${esc(skills[idx].name)}]</span>` : esc(w);
+    }).join(' ');
+    document.getElementById('previewMeta').textContent = `${noiseLabel(noiseCount)} noise words · ${skills.length} skill instructions buried`;
+    return;
   }
-  if (!isMulti) {
-    const words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, ['__SKILL__']);
-    const doc = words.map(w => w==='__SKILL__' ? skill.system : w).join(' ')+'.';
-    return [
-      { role:'system', content:'You are a skill router. Read the entire document the user provides. Find the embedded skill instruction and execute it exactly. Output only what the skill instruction specifies — no commentary.' },
-      { role:'user', content: doc+'\n\n'+skill.trigger }
-    ];
-  } else {
-    const decoyKeys = getDecoyKeys();
-    const insertions = ['__TARGET__', ...decoyKeys.map(k=>'__DECOY_'+k+'__')];
-    const words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, insertions);
-    const doc = words.map(w => {
-      if (w==='__TARGET__') return skill.system;
-      if (w.startsWith('__DECOY_')) { const k=w.replace('__DECOY_','').replace('__',''); return SKILLS[k]?.system||''; }
-      return w;
-    }).join(' ')+'.';
-    return [
-      { role:'system', content:'You are a skill router. The document contains multiple embedded skill instructions. Find the one matching the trigger and execute ONLY that one. Output only what that skill specifies — no commentary.' },
-      { role:'user', content: doc+'\n\nTrigger: '+skill.trigger }
-    ];
+  // single
+  const skill = currentSkill();
+  if (noiseCount === 0) {
+    document.getElementById('haystackPreview').innerHTML = `<span class="trigger">${esc(skill.trigger)}</span>`;
+    document.getElementById('previewMeta').textContent = 'Zero-noise baseline — skill in system prompt, trigger in user message';
+    return;
   }
+  const words = buildHaystackWords(noiseCount, pos, ['__SKILL__']);
+  document.getElementById('haystackPreview').innerHTML = words.map(w => w==='__SKILL__' ? `<span class="trigger">[SKILL INSTRUCTION]</span>` : esc(w)).join(' ');
+  document.getElementById('previewMeta').textContent = `${noiseLabel(noiseCount)} noise words · 1 skill buried`;
+}
+
+// ── Precision scoring ──
+function scorePrecision(output, expected) {
+  const trimmed = output.trim(), expNorm = expected.trim();
+  if (trimmed === expNorm) return 1.0;
+  if (!trimmed) return 0.0;
+  if (trimmed.startsWith(expNorm)) {
+    const extra = trimmed.length - expNorm.length;
+    return Math.max(0, 1 - extra / expNorm.length); // v6 anchored formula
+  }
+  const overlap = longestCommonPrefix(trimmed, expNorm);
+  return overlap > 0 ? (overlap / Math.max(trimmed.length, expNorm.length)) * 0.5 : 0.0;
+}
+function longestCommonPrefix(a, b) {
+  let i = 0; while (i<a.length && i<b.length && a[i]===b[i]) i++; return i;
+}
+function splitCleanDirty(output, expected) {
+  const t = output.trim(), e = expected.trim();
+  if (t === e) return { clean:t, dirty:'' };
+  if (t.startsWith(e)) return { clean:e, dirty:t.substring(e.length) };
+  const ov = longestCommonPrefix(t,e);
+  return { clean:t.substring(0,ov), dirty:t.substring(ov) };
+}
+function fullScore(skill, rawOutput) {
+  const content = skill.scoreContent(rawOutput);
+  const precision = scorePrecision(rawOutput, skill.expected);
+  const split = splitCleanDirty(rawOutput, skill.expected);
+  const contaminated = rawOutput.trim() !== skill.expected.trim() && rawOutput.trim().length > 0;
+  return { fidelity:content.fidelity, precision, correct:content.correct, total:content.total, contaminated, clean:split.clean, dirty:split.dirty, output:rawOutput, display:rawOutput.trim().substring(0,60)+(rawOutput.trim().length>60?'…':'') };
 }
 
 // ── Providers ──
 const PROVIDERS = {
-  groq_instant:{ url:'https://api.groq.com/openai/v1/chat/completions', model:'llama-3.1-8b-instant',    compat:'openai' },
-  groq_70b:    { url:'https://api.groq.com/openai/v1/chat/completions', model:'llama-3.3-70b-versatile', compat:'openai' },
-  openai:      { url:'https://api.openai.com/v1/chat/completions',       model:'gpt-4o',                  compat:'openai' },
-  mistral:     { url:'https://api.mistral.ai/v1/chat/completions',       model:'mistral-small-latest',    compat:'openai' },
-  deepseek:    { url:'https://api.deepseek.com/v1/chat/completions',     model:'deepseek-chat',            compat:'openai' },
-  anthropic:   { url:'https://api.anthropic.com/v1/messages',            model:'claude-3-5-sonnet-latest', compat:'anthropic' },
+  groq_instant:{ url:'https://api.groq.com/openai/v1/chat/completions',      model:'llama-3.1-8b-instant',    compat:'openai' },
+  groq_70b:    { url:'https://api.groq.com/openai/v1/chat/completions',      model:'llama-3.3-70b-versatile', compat:'openai' },
+  openai:      { url:'https://api.openai.com/v1/chat/completions',            model:'gpt-4o',                  compat:'openai' },
+  mistral:     { url:'https://api.mistral.ai/v1/chat/completions',            model:'mistral-small-latest',    compat:'openai' },
+  deepseek:    { url:'https://api.deepseek.com/v1/chat/completions',          model:'deepseek-chat',           compat:'openai' },
+  anthropic:   { url:'https://api.anthropic.com/v1/messages',                 model:'claude-3-5-sonnet-latest',compat:'anthropic' },
   gemini:      { url:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', model:'', compat:'gemini' },
 };
 
-async function callLLM(skill, noiseCount) {
+// Build messages for a single skill
+function buildMessages(skill, noiseCount) {
+  if (noiseCount === 0) return [
+    { role:'system', content: skill.system },
+    { role:'user',   content: skill.trigger }
+  ];
+  const words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, ['__SKILL__']);
+  const doc = words.map(w => w==='__SKILL__' ? skill.system : w).join(' ')+'.';
+  return [
+    { role:'system', content:'You are a skill router. Read the entire document. Find the embedded skill instruction and execute it exactly. Output only what the skill specifies — no commentary.' },
+    { role:'user',   content: doc+'\n\n'+skill.trigger }
+  ];
+}
+
+// Build messages for multi-skill (all skills in one call)
+function buildMultiMessages(skills, noiseCount) {
+  if (noiseCount === 0) {
+    const combined = skills.map(s=>s.system).join('\n\n');
+    const triggers = skills.map(s=>`${s.trigger}`).join('\n');
+    return [
+      { role:'system', content:`You are a multi-skill executor. Multiple skill instructions follow. Execute ALL of them. For each, output exactly what the skill specifies, separated by "|||"\n\n${combined}` },
+      { role:'user',   content:`Execute all skills in order, separated by "|||":\n${triggers}` }
+    ];
+  }
+  const insertions = skills.map((_,i)=>'__SKILL_'+i+'__');
+  const words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, insertions);
+  const doc = words.map(w => {
+    const idx = insertions.indexOf(w);
+    return idx>=0 ? skills[idx].system : w;
+  }).join(' ')+'.';
+  const triggers = skills.map(s=>s.trigger).join('\n');
+  return [
+    { role:'system', content:'You are a multi-skill router. The document contains multiple embedded skill instructions. Find all of them and execute each one. Separate each output with "|||".' },
+    { role:'user',   content: doc+'\n\nExecute all skills in order, separated by "|||":\n'+triggers }
+  ];
+}
+
+async function callLLM_single(skill, noiseCount) {
   const provKey = document.getElementById('providerSelect').value;
   const apiKey  = document.getElementById('apiKey').value.trim();
   const p = PROVIDERS[provKey];
   const messages = buildMessages(skill, noiseCount);
   try {
     let text = '', rawErr = null;
-    if (p.compat === 'openai') {
-      const res = await fetch(p.url, {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
-        body: JSON.stringify({ model:p.model, messages, max_tokens:300, temperature:0 })
-      });
+    if (p.compat==='openai') {
+      const res = await fetch(p.url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model:p.model,messages,max_tokens:400,temperature:0})});
       const d = await res.json();
       if (d.error) rawErr = d.error.message||JSON.stringify(d.error);
-      text = d.choices?.[0]?.message?.content?.trim() || '';
-    } else if (p.compat === 'anthropic') {
-      const res = await fetch(p.url, {
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
-        body: JSON.stringify({ model:p.model, max_tokens:300, system:messages[0].content, messages:[messages[1]] })
-      });
+      text = d.choices?.[0]?.message?.content?.trim()||'';
+    } else if (p.compat==='anthropic') {
+      const res = await fetch(p.url,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:p.model,max_tokens:400,system:messages[0].content,messages:[messages[1]]})});
       const d = await res.json();
       if (d.error) rawErr = d.error.message||JSON.stringify(d.error);
-      text = d.content?.[0]?.text?.trim() || '';
-    } else if (p.compat === 'gemini') {
-      const res = await fetch(`${p.url}?key=${apiKey}`, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          systemInstruction:{ parts:[{ text:messages[0].content }] },
-          contents:[{ parts:[{ text:messages[1].content }] }],
-          generationConfig:{ maxOutputTokens:300, temperature:0 }
-        })
-      });
+      text = d.content?.[0]?.text?.trim()||'';
+    } else if (p.compat==='gemini') {
+      const res = await fetch(`${p.url}?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:messages[0].content}]},contents:[{parts:[{text:messages[1].content}]}],generationConfig:{maxOutputTokens:400,temperature:0}})})
       const d = await res.json();
       if (d.error) rawErr = d.error.message||JSON.stringify(d.error);
-      text = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+      text = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim()||'';
     }
-    if (rawErr) return { fidelity:0, precision:0, correct:0, total:1, contaminated:false, display:'API ERR: '+rawErr.substring(0,80), output:rawErr, isErr:true };
-    return fullScore(skill, text);
+    if (rawErr) return [{...fullScore(skill,''), isErr:true, display:'API ERR: '+rawErr.substring(0,80)}];
+    return [fullScore(skill, text)];
   } catch(e) {
-    return { fidelity:0, precision:0, correct:0, total:1, contaminated:false, display:'FETCH ERR: '+e.message.substring(0,60), output:e.message, isErr:true };
+    return [{...fullScore(skill,''), isErr:true, display:'FETCH ERR: '+e.message.substring(0,60)}];
   }
 }
 
-async function simulateTrial(skill, noiseCount) {
-  await new Promise(r => setTimeout(r, 40 + Math.random()*80));
-  const isMulti = haystackMode === 'multi';
-  const decoyPenalty  = isMulti ? parseInt(decoySlider.value)*0.04 : 0;
-  const depthPenalty  = noiseCount === 0 ? 0 : Math.min(0.6, (noiseCount/20000)*0.7);
-  const baseFidelity  = Math.max(0.05, 0.97 - depthPenalty - decoyPenalty);
-  // Contamination probability rises with noise depth
-  const contaminationProb = noiseCount === 0 ? 0 : Math.min(0.6, (noiseCount/20000)*0.8);
+async function callLLM_multi(skills, noiseCount) {
+  const provKey = document.getElementById('providerSelect').value;
+  const apiKey  = document.getElementById('apiKey').value.trim();
+  const p = PROVIDERS[provKey];
+  const messages = buildMultiMessages(skills, noiseCount);
+  try {
+    let text = '', rawErr = null;
+    if (p.compat==='openai') {
+      const res = await fetch(p.url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model:p.model,messages,max_tokens:600,temperature:0})});
+      const d = await res.json();
+      if (d.error) rawErr = d.error.message||JSON.stringify(d.error);
+      text = d.choices?.[0]?.message?.content?.trim()||'';
+    } else if (p.compat==='anthropic') {
+      const res = await fetch(p.url,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:p.model,max_tokens:600,system:messages[0].content,messages:[messages[1]]})});
+      const d = await res.json();
+      if (d.error) rawErr = d.error.message||JSON.stringify(d.error);
+      text = d.content?.[0]?.text?.trim()||'';
+    } else if (p.compat==='gemini') {
+      const res = await fetch(`${p.url}?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:messages[0].content}]},contents:[{parts:[{text:messages[1].content}]}],generationConfig:{maxOutputTokens:600,temperature:0}})})
+      const d = await res.json();
+      if (d.error) rawErr = d.error.message||JSON.stringify(d.error);
+      text = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim()||'';
+    }
+    if (rawErr) return skills.map(s=>({...fullScore(s,''),isErr:true,display:'API ERR: '+rawErr.substring(0,60)}));
+    // Split response by ||| separator
+    const parts = text.split('|||');
+    return skills.map((s,i) => fullScore(s, (parts[i]||'').trim()));
+  } catch(e) {
+    return skills.map(s=>({...fullScore(s,''),isErr:true,display:'FETCH ERR: '+e.message.substring(0,50)}));
+  }
+}
+
+// ── Simulate — steeper degradation curve ──
+// v6: contamination sigmoid is steeper — degradation visible by ~3k words.
+// At 20k words: ~80% contamination probability (was ~60%).
+async function simulateSingle(skill, noiseCount) {
+  await new Promise(r=>setTimeout(r, 40+Math.random()*80));
+  const depthFrac = noiseCount === 0 ? 0 : noiseCount / 20000;
+  // Steeper sigmoid: passes through (0,0), (3k,0.4), (10k,0.7), (20k,0.85)
+  const contaminationProb = noiseCount === 0 ? 0 : Math.min(0.85, 1 / (1 + Math.exp(-8*(depthFrac-0.25))));
+  const fidelityPenalty   = noiseCount === 0 ? 0 : Math.min(0.65, depthFrac * 0.9);
+  const baseFidelity = Math.max(0.05, 0.97 - fidelityPenalty);
   const raw = Math.random();
   let rawOutput;
-  if (raw < baseFidelity) {
-    rawOutput = skill.expected;
-  } else if (raw < baseFidelity + 0.12) {
-    const frac = 0.3 + Math.random()*0.5;
-    rawOutput = skill.expected.substring(0, Math.floor(skill.expected.length*frac));
-  } else {
-    rawOutput = '';
-  }
-  // Apply contamination: append noise words to otherwise-successful output
+  if (raw < baseFidelity) rawOutput = skill.expected;
+  else if (raw < baseFidelity + 0.12) rawOutput = skill.expected.substring(0, Math.floor(skill.expected.length*(0.3+Math.random()*0.5)));
+  else rawOutput = '';
   if (rawOutput.length > 0 && Math.random() < contaminationProb) {
-    const noiseAppend = Array.from({length: 2 + Math.floor(Math.random()*4)}, rw).join(' ');
-    rawOutput = rawOutput + ' ' + noiseAppend;
+    rawOutput = rawOutput + ' ' + Array.from({length:2+Math.floor(Math.random()*4)},rw).join(' ');
   }
   return fullScore(skill, rawOutput);
 }
 
-// ── Helpers for color classes ──
-function fidClass(f)  { return f===1?'full':f>0?'partial':'zero'; }
-function precClass(p) { return p===1?'full':p>0?'dirty':'zero'; }
-function fidColorClass(f) { return f>=0.85?'':f>=0.5?' mid':' low'; }
+async function simulateMulti(skills, noiseCount) {
+  await new Promise(r=>setTimeout(r, 60+Math.random()*120));
+  return skills.map(s => {
+    const depthFrac = noiseCount === 0 ? 0 : noiseCount / 20000;
+    const contaminationProb = noiseCount === 0 ? 0 : Math.min(0.85, 1/(1+Math.exp(-8*(depthFrac-0.25))));
+    // Multi adds extra difficulty: each extra skill adds penalty
+    const multiPenalty = (skills.length - 1) * 0.06;
+    const fidelityPenalty = noiseCount === 0 ? 0 : Math.min(0.75, depthFrac*0.9 + multiPenalty);
+    const baseFidelity = Math.max(0.05, 0.97 - fidelityPenalty);
+    const raw = Math.random();
+    let rawOutput;
+    if (raw < baseFidelity) rawOutput = s.expected;
+    else if (raw < baseFidelity + 0.12) rawOutput = s.expected.substring(0, Math.floor(s.expected.length*(0.3+Math.random()*0.5)));
+    else rawOutput = '';
+    if (rawOutput.length > 0 && Math.random() < contaminationProb) {
+      rawOutput = rawOutput + ' ' + Array.from({length:2+Math.floor(Math.random()*4)},rw).join(' ');
+    }
+    return fullScore(s, rawOutput);
+  });
+}
+
+// ── Helpers ──
+function fidClass(f)       { return f===1?'full':f>0?'partial':'zero'; }
+function precClass(p)      { return p===1?'full':p>0?'dirty':'zero'; }
+function fidColorClass(f)  { return f>=0.85?'':f>=0.5?' mid':' low'; }
 function precColorClass(p) { return p>=0.85?'':p>=0.5?' mid':' low'; }
+function colorForRate(r)   { return r>=0.85?'var(--pass)':r>=0.5?'var(--gold)':'var(--fail)'; }
+
+// ── Export helpers ──
+let lastRun = null;
+function triggerDownload(filename, content, mime) {
+  const blob = new Blob([content],{type:mime});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href);
+}
+function safeFilename(runId, ext) { return `skill-haystack_${runId.replace(/[:.]/g,'-')}.${ext}`; }
+
+function exportCSV() {
+  if (!lastRun) return;
+  const r = lastRun;
+  const metaKeys = ['run_id','scoring_version','mode','provider','skill_ids','noise_words','trials','passes','fails','pass_rate','avg_fidelity','avg_precision','contamination_rate'];
+  const metaVals = metaKeys.map(k => { const v=r[k]; return typeof v==='number'?v:`"${String(v).replace(/"/g,'""')}"`; });
+  const trialHeader = 'trial,skill_id,fidelity,precision,contaminated';
+  const trialRows   = r.trial_log.flatMap(t => t.skills.map(s => `${t.trial},${s.skill_id},${s.fidelity.toFixed(3)},${s.precision.toFixed(3)},${s.contaminated}`));
+  const csv = ['# Skill-Haystack Run Summary', metaKeys.join(','), metaVals.join(','), '', '# Trial Log', trialHeader, ...trialRows].join('\n');
+  triggerDownload(safeFilename(r.run_id,'csv'), csv, 'text/csv');
+}
+
+function exportMD() {
+  if (!lastRun) return;
+  const r = lastRun;
+  const pct = v => `${(v*100).toFixed(1)}%`;
+  const ts  = new Date(r.run_id).toLocaleString();
+  const trialRows = r.trial_log.map(t => {
+    const avg_f = t.skills.reduce((a,s)=>a+s.fidelity,0)/t.skills.length;
+    const avg_p = t.skills.reduce((a,s)=>a+s.precision,0)/t.skills.length;
+    const icon  = avg_f===1?'✅':avg_f>0?'⚠️':'❌';
+    const dirty = t.skills.some(s=>s.contaminated) ? ' 💉' : '';
+    return `| ${String(t.trial).padStart(2,'0')} | ${icon}${dirty} | ${pct(avg_f)} | ${pct(avg_p)} |`;
+  });
+  const skillBreakdown = r.skill_summary ? Object.entries(r.skill_summary).map(([k,v]) =>
+    `| ${k} | ${pct(v.avg_fidelity)} | ${pct(v.avg_precision)} |`
+  ).join('\n') : '';
+  const md = `# Skill-Haystack Run Report\n\n**Run ID:** \`${r.run_id}\`  \n**Timestamp:** ${ts}  \n**Scoring:** v6\n\n---\n\n## Configuration\n\n| Field | Value |\n|---|---|\n| Mode | ${r.mode} |\n| Provider | \`${r.provider}\` |\n| Skills | ${r.skill_ids} |\n| Noise Words | ${r.noise_words.toLocaleString()} |\n| Trials | ${r.trials} |\n\n---\n\n## Results Summary\n\n| Metric | Value |\n|---|---|\n| **Avg Fidelity** | **${pct(r.avg_fidelity)}** |\n| Avg Precision | ${pct(r.avg_precision)} |\n| Contamination Rate | ${pct(r.contamination_rate)} |\n| Passes | ${r.passes}/${r.trials} |\n\n${skillBreakdown ? `## Per-Skill Breakdown\n\n| Skill | Avg Fidelity | Avg Precision |\n|---|---|---|\n${skillBreakdown}\n\n` : ''}---\n\n## Trial Log\n\n| Trial | Result | Fidelity | Precision |\n|---|---|---|---|\n${trialRows.join('\n')}\n\n---\n\n*Generated by [Skill-Haystack](https://github.com/nothinginfinity/Skill-Haystack)*\n`;
+  triggerDownload(safeFilename(r.run_id,'md'), md, 'text/markdown');
+}
+
+function exportJSON() {
+  if (!lastRun) return;
+  triggerDownload(safeFilename(lastRun.run_id,'json'), JSON.stringify(lastRun,null,2), 'application/json');
+}
 
 // ── Run ──
 let running = false;
@@ -855,23 +982,23 @@ async function startRun() {
   running = true;
   const trials     = parseInt(trialsSlider.value);
   const noiseCount = sliderToNoise(noiseSlider.value);
-  const skill      = currentSkill();
   const isLive     = mode === 'live';
-  if (isLive && !document.getElementById('apiKey').value.trim()) {
-    alert('Please enter an API key for Live API mode.'); running = false; return;
-  }
+  const isMulti    = haystackMode === 'multi';
+  const skillsToRun = isMulti ? getMultiSkills() : [currentSkill()];
+  if (!skillsToRun.length) { alert('Select at least one skill.'); running=false; return; }
+  if (isLive && !document.getElementById('apiKey').value.trim()) { alert('Please enter an API key for Live API mode.'); running=false; return; }
+
   document.getElementById('runBtn').disabled = true;
   const provKey   = document.getElementById('providerSelect').value;
   const badge     = document.getElementById('providerBadge');
-  const modeLabel = haystackMode === 'multi' ? ' · MULTI' : '';
-  badge.textContent = (isLive ? provKey.toUpperCase().replace('_',' ') : 'SIMULATED') + modeLabel;
+  badge.textContent = (isLive ? provKey.toUpperCase().replace('_',' ') : 'SIMULATED') + (isMulti?' · MULTI':'');
   badge.style.display = 'inline-flex';
 
+  const runId = new Date().toISOString();
   let totalFidelity=0, totalPrecision=0, passes=0, partials=0, fails=0, contaminations=0;
-  const trialResults = [];
-  const decoyCount   = haystackMode==='multi' ? parseInt(decoySlider.value) : 0;
-  const contextLabel = noiseCount===0 ? 'baseline'
-    : `${noiseLabel(noiseCount)} words${decoyCount ? ` + ${decoyCount} decoy${decoyCount>1?'s':''}` : ''}`;
+  const trialLog = [];
+  const skillSums = {};
+  skillsToRun.forEach(s => { skillSums[s.name] = {fid:0,prec:0,n:0}; });
 
   document.getElementById('resultsBody').innerHTML = `
     <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
@@ -889,9 +1016,10 @@ async function startRun() {
         <div class="score-sub" id="precSub">Output cleanliness</div>
       </div>
     </div>
+    ${isMulti ? `<div class="multi-breakdown"><div class="multi-breakdown-title">Per-Skill Fidelity</div>${skillsToRun.map(s=>`<div class="skill-score-row" id="sbr_${s.name.replace(/[^a-zA-Z0-9]/g,'_')}"><span class="skill-score-name">${esc(s.name)}</span><div class="skill-score-bar"><div class="skill-score-fill" id="sfill_${s.name.replace(/[^a-zA-Z0-9]/g,'_')}" style="width:0;background:var(--pass)"></div></div><span class="skill-score-pct" id="spct_${s.name.replace(/[^a-zA-Z0-9]/g,'_')}">—</span></div>`).join('')}</div>` : ''}
     <div class="legend-row">
-      <span class="legend-item"><span class="score-dot fidelity"></span>Fidelity = correct content present</span>
-      <span class="legend-item"><span class="score-dot precision"></span>Precision = no extra noise leaked</span>
+      <span class="legend-item"><span class="score-dot fidelity"></span>Fidelity = correct content</span>
+      <span class="legend-item"><span class="score-dot precision"></span>Precision = no noise leaked</span>
     </div>
     <div class="stats-row">
       <div class="stat-pill stat-pass"><div class="stat-num" id="sPass">0</div><div class="stat-label">Full</div></div>
@@ -900,94 +1028,134 @@ async function startRun() {
     </div>
     <div id="contaminationCallout" style="display:none"></div>
     <div class="trial-grid" id="dotGrid"></div>
-    <div class="output-log" id="outputLog"></div>`;
+    <div class="output-log" id="outputLog"></div>
+    <div class="run-id-label" id="runIdLabel"></div>
+    <div class="export-row" id="exportRow" style="display:none">
+      <button class="export-btn csv" onclick="exportCSV()">⬇ CSV</button>
+      <button class="export-btn md"  onclick="exportMD()">⬇ .md</button>
+      <button class="export-btn json" onclick="exportJSON()">⬇ JSON</button>
+    </div>`;
 
   const dotGrid = document.getElementById('dotGrid');
   const dots = [];
   for (let i=0; i<trials; i++) {
-    const d = document.createElement('div');
-    d.className='dot pending';
+    const d=document.createElement('div'); d.className='dot pending';
     d.textContent=String(i+1).padStart(2,'0');
     dotGrid.appendChild(d); dots.push(d);
   }
 
   for (let i=0; i<trials; i++) {
     dots[i].className='dot running';
-    const result = isLive ? await callLLM(skill, noiseCount) : await simulateTrial(skill, noiseCount);
-    trialResults.push(result);
-    const f = result.fidelity, p = result.precision;
-    const dirty = result.contaminated;
-    // Dot class: pass-clean, pass-dirty, partial, partial-dirty, fail
-    let dotCls = f===1 ? (dirty?'pass-dirty':'pass-clean') : f>0 ? (dirty?'partial-dirty':'partial') : 'fail';
-    dots[i].className = 'dot '+dotCls;
-    if (dirty) { const pip=document.createElement('span'); pip.className='pip'; dots[i].appendChild(pip); }
-    if (f===1&&!dirty) passes++; else if (f>0||dirty) partials++; else fails++;
-    if (dirty) contaminations++;
-    totalFidelity  += f;
-    totalPrecision += p;
-    const aFid  = totalFidelity  / (i+1);
-    const aPrec = totalPrecision / (i+1);
-    const fPct = Math.round(aFid*100), pPct = Math.round(aPrec*100);
-    document.getElementById('fidPct').textContent  = fPct+'%';
-    document.getElementById('fidPct').className    = 'score-pct fidelity'+fidColorClass(aFid);
-    document.getElementById('fidFill').style.width = fPct+'%';
-    document.getElementById('fidFill').className   = 'score-fill fidelity'+fidColorClass(aFid);
-    document.getElementById('precPct').textContent  = pPct+'%';
-    document.getElementById('precPct').className    = 'score-pct precision'+precColorClass(aPrec);
-    document.getElementById('precFill').style.width = pPct+'%';
-    document.getElementById('precFill').className   = 'score-fill precision'+precColorClass(aPrec);
-    document.getElementById('sPass').textContent    = passes;
-    document.getElementById('sPartial').textContent = partials;
-    document.getElementById('sFail').textContent    = fails;
-    document.getElementById('fidSub').textContent   = `Avg ${fPct}% · ${i+1}/${trials}`;
-    document.getElementById('precSub').textContent  = `Avg ${pPct}% · ${contaminations} contaminated`;
-    document.getElementById('progFill').style.width = ((i+1)/trials*100)+'%';
+    let results;
+    if (isLive) {
+      results = isMulti ? await callLLM_multi(skillsToRun, noiseCount) : await callLLM_single(skillsToRun[0], noiseCount);
+    } else {
+      results = isMulti ? await simulateMulti(skillsToRun, noiseCount) : [await simulateSingle(skillsToRun[0], noiseCount)];
+    }
+
+    const avgF = results.reduce((a,r)=>a+r.fidelity,0)/results.length;
+    const avgP = results.reduce((a,r)=>a+r.precision,0)/results.length;
+    const anyDirty = results.some(r=>r.contaminated);
+
+    results.forEach((r,ri) => {
+      const sk = skillsToRun[ri];
+      skillSums[sk.name].fid  += r.fidelity;
+      skillSums[sk.name].prec += r.precision;
+      skillSums[sk.name].n++;
+      // Update per-skill bars
+      const key = sk.name.replace(/[^a-zA-Z0-9]/g,'_');
+      const pctEl  = document.getElementById('spct_'+key);
+      const fillEl = document.getElementById('sfill_'+key);
+      if (pctEl)  { const avg=skillSums[sk.name].fid/skillSums[sk.name].n; pctEl.textContent=Math.round(avg*100)+'%'; pctEl.style.color=colorForRate(avg); }
+      if (fillEl) { const avg=skillSums[sk.name].fid/skillSums[sk.name].n; fillEl.style.width=Math.round(avg*100)+'%'; fillEl.style.background=colorForRate(avg); }
+    });
+
+    if (avgF===1&&!anyDirty) passes++; else if (avgF>0||anyDirty) partials++; else fails++;
+    if (anyDirty) contaminations++;
+    totalFidelity  += avgF;
+    totalPrecision += avgP;
+
+    let dotCls = avgF===1?(anyDirty?'pass-dirty':'pass-clean'):avgF>0?(anyDirty?'partial-dirty':'partial'):'fail';
+    dots[i].className='dot '+dotCls;
+    if (anyDirty) { const pip=document.createElement('span');pip.className='pip';dots[i].appendChild(pip); }
+
+    const aFid=totalFidelity/(i+1), aPrec=totalPrecision/(i+1);
+    const fPct=Math.round(aFid*100), pPct=Math.round(aPrec*100);
+    document.getElementById('fidPct').textContent=fPct+'%';
+    document.getElementById('fidPct').className='score-pct fidelity'+fidColorClass(aFid);
+    document.getElementById('fidFill').style.width=fPct+'%';
+    document.getElementById('fidFill').className='score-fill fidelity'+fidColorClass(aFid);
+    document.getElementById('precPct').textContent=pPct+'%';
+    document.getElementById('precPct').className='score-pct precision'+precColorClass(aPrec);
+    document.getElementById('precFill').style.width=pPct+'%';
+    document.getElementById('precFill').className='score-fill precision'+precColorClass(aPrec);
+    document.getElementById('sPass').textContent=passes;
+    document.getElementById('sPartial').textContent=partials;
+    document.getElementById('sFail').textContent=fails;
+    document.getElementById('fidSub').textContent=`Avg ${fPct}% · ${i+1}/${trials}`;
+    document.getElementById('precSub').textContent=`Avg ${pPct}% · ${contaminations} contaminated`;
+    document.getElementById('progFill').style.width=((i+1)/trials*100)+'%';
+
+    trialLog.push({ trial:i+1, avg_fidelity:avgF, avg_precision:avgP, contaminated:anyDirty,
+      skills: results.map((r,ri)=>({ skill_id:skillsToRun[ri].name, fidelity:r.fidelity, precision:r.precision, contaminated:r.contaminated, output:r.output.substring(0,120) })) });
   }
 
-  const aFid  = totalFidelity  / trials;
-  const aPrec = totalPrecision / trials;
-  const gap   = Math.round((aFid - aPrec)*100);
+  const aFid=totalFidelity/trials, aPrec=totalPrecision/trials;
+  const gap=Math.round((aFid-aPrec)*100);
 
-  // Contamination callout
-  const callout = document.getElementById('contaminationCallout');
-  if (contaminations > 0) {
-    const ex = trialResults.find(r=>r.contaminated);
-    const snippet = ex ? ex.dirty.trim().split(/\s+/).slice(0,4).join(' ') : '';
+  const callout=document.getElementById('contaminationCallout');
+  if (contaminations>0) {
+    const ex=trialLog.find(t=>t.contaminated);
+    const snippet=ex?.skills?.find(s=>s.contaminated)?.output||'';
+    const snipShort=snippet.trim().split(/\s+/).slice(-4).join(' ');
     callout.style.display='block';
-    callout.innerHTML = `<div class="contamination-callout">
-      <strong>⚠️ Output Contamination Detected (${contaminations}/${trials} trials)</strong><br>
-      The LLM found the skill correctly (Fidelity ${Math.round(aFid*100)}%) but leaked noise words into the output — Precision gap: <strong>${gap}pp</strong>.<br>
-      Example trailing noise: <span class="noise-snippet">${esc(snippet||'…')}</span>
-    </div>`;
-  } else {
-    callout.style.display='none';
-  }
+    callout.innerHTML=`<div class="contamination-callout"><strong>⚠️ Contamination in ${contaminations}/${trials} trials</strong><br>Correct content present but noise leaked into output — Fidelity–Precision gap: <strong>${gap}pp</strong>.<br>Example trailing noise: <span class="noise-snippet">${esc(snipShort||'…')}</span></div>`;
+  } else callout.style.display='none';
 
-  document.getElementById('outputLog').innerHTML =
-    `<div class="output-header">Trial Output Log &nbsp;&middot;&nbsp; <span style="color:var(--pass)">F=Fidelity</span> &nbsp;<span style="color:var(--purple)">P=Precision</span></div>`+
-    trialResults.map((r,i) => {
-      const fCls = fidClass(r.fidelity);
-      const pCls = precClass(r.precision);
-      const textHtml = r.isErr
-        ? `<span class="out-text err">${esc(r.display)}</span>`
-        : `<span class="out-text"><span class="clean-part">${esc(r.clean||'')}</span><span class="dirty-part">${esc(r.dirty||'')}</span></span>`;
-      return `<div class="output-entry">
-        <span class="out-trial">#${String(i+1).padStart(2,'0')}</span>
-        <div class="out-scores">
-          <span class="out-score fid ${fCls}">F${Math.round(r.fidelity*100)}%</span>
-          <span class="out-score prec ${pCls}">P${Math.round(r.precision*100)}%</span>
-        </div>
-        ${textHtml}
-      </div>`;
+  document.getElementById('outputLog').innerHTML=
+    `<div class="output-header">Trial Output Log &nbsp;·&nbsp; <span style="color:var(--pass)">F=Fidelity</span> &nbsp;<span style="color:var(--purple)">P=Precision</span></div>`+
+    trialLog.map(t=>{
+      const r0=t.skills[0];
+      const fCls=fidClass(t.avg_fidelity), pCls=precClass(t.avg_precision);
+      const sp=splitCleanDirty(r0.output, skillsToRun[0].expected);
+      const textHtml=`<span class="out-text"><span class="clean-part">${esc(sp.clean||'')}</span><span class="dirty-part">${esc(sp.dirty||'')}</span></span>`;
+      return `<div class="output-entry"><span class="out-trial">#${String(t.trial).padStart(2,'0')}</span><div class="out-scores"><span class="out-score fid ${fCls}">F${Math.round(t.avg_fidelity*100)}%</span><span class="out-score prec ${pCls}">P${Math.round(t.avg_precision*100)}%</span></div>${textHtml}</div>`;
     }).join('');
 
-  running = false;
-  document.getElementById('runBtn').disabled = false;
+  // Build skill summary for export
+  const skillSummary = {};
+  skillsToRun.forEach(s => {
+    const d=skillSums[s.name];
+    skillSummary[s.name]={avg_fidelity:d.fid/d.n,avg_precision:d.prec/d.n};
+  });
+
+  document.getElementById('runIdLabel').textContent=`Run ID: ${runId}`;
+  document.getElementById('exportRow').style.display='flex';
+
+  lastRun = {
+    run_id:runId, scoring_version:'v6',
+    mode: isMulti?'multi':'single',
+    provider: isLive?provKey:'simulated',
+    skill_ids: skillsToRun.map(s=>s.name).join(', '),
+    noise_words: noiseCount,
+    trials,
+    passes, fails:trials-passes,
+    pass_rate: passes/trials,
+    avg_fidelity: aFid,
+    avg_precision: aPrec,
+    contamination_rate: contaminations/trials,
+    skill_summary: skillSummary,
+    trial_log: trialLog,
+  };
+
+  running=false;
+  document.getElementById('runBtn').disabled=false;
 }
 
 // ── Init ──
+buildMultiSkillChecks();
 onSkillChange();
-document.getElementById('zeroTag').style.display = 'inline-flex';
+document.getElementById('zeroTag').style.display='inline-flex';
 document.getElementById('skillSelect').addEventListener('change', onSkillChange);
 </script>
 </body>
