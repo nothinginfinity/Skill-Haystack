@@ -1,12 +1,21 @@
 {
   "name": "skill-haystack",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Single-skill haystack benchmark for LLM routing reliability",
-  "main": "src/runner.ts",
   "scripts": {
-    "run:bench": "ts-node src/runner.ts",
-    "run:bench:deep": "ts-node src/runner.ts --noise-words 1000",
-    "run:bench:all-skills": "for skill in weather translate summarize calendar search; do ts-node src/runner.ts --skill-id $skill; done"
+    "bench": "ts-node src/runner.ts",
+    "bench:openai":    "HAYSTACK_PROVIDER=openai    ts-node src/runner.ts",
+    "bench:groq":      "HAYSTACK_PROVIDER=groq      ts-node src/runner.ts",
+    "bench:gemini":    "HAYSTACK_PROVIDER=gemini    ts-node src/runner.ts",
+    "bench:anthropic": "HAYSTACK_PROVIDER=anthropic ts-node src/runner.ts",
+    "bench:xai":       "HAYSTACK_PROVIDER=xai       ts-node src/runner.ts",
+    "bench:mistral":   "HAYSTACK_PROVIDER=mistral   ts-node src/runner.ts",
+    "bench:deepseek":  "HAYSTACK_PROVIDER=deepseek  ts-node src/runner.ts",
+    "bench:cerebras":  "HAYSTACK_PROVIDER=cerebras  ts-node src/runner.ts",
+    "bench:fireworks": "HAYSTACK_PROVIDER=fireworks ts-node src/runner.ts",
+    "bench:sambanova": "HAYSTACK_PROVIDER=sambanova ts-node src/runner.ts",
+    "bench:stub":      "HAYSTACK_PROVIDER=stub      ts-node src/runner.ts",
+    "bench:all": "for provider in openai groq gemini anthropic xai mistral deepseek cerebras fireworks sambanova; do HAYSTACK_PROVIDER=$provider ts-node src/runner.ts || true; done"
   },
   "devDependencies": {
     "typescript": "^5.4.0",

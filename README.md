@@ -23,9 +23,56 @@ That's your baseline. One skill. One haystack. One success rate.
 
 ---
 
-## Why This First
+## Supported Providers
 
-The full [skill-bench.md](https://github.com/nothinginfinity/skill-bench.md) project tests routing fidelity across 200 skills at once. When it fails, you don't know *why*. Is it the token format? Competing skill bodies? Noise in the manifest? The haystack approach isolates the hardest atomic question first.
+| Provider | Models | Env var |
+|---|---|---|
+| `openai` | GPT-4o, gpt-4o-mini | `OPENAI_API_KEY` |
+| `groq` | llama-3.3-70b-versatile, mixtral-8x7b-32768, gemma2-9b-it | `GROQ_API_KEY` |
+| `gemini` | gemini-2.0-flash, gemini-1.5-pro | `GEMINI_API_KEY` |
+| `anthropic` | claude-3-5-sonnet-latest, claude-3-haiku-20240307 | `ANTHROPIC_API_KEY` |
+| `xai` | grok-3, grok-3-mini | `XAI_API_KEY` |
+| `mistral` | mistral-small-latest, mistral-large-latest, codestral-latest | `MISTRAL_API_KEY` |
+| `deepseek` | deepseek-chat, deepseek-coder | `DEEPSEEK_API_KEY` |
+| `cerebras` | llama3.1-70b, llama3.1-8b | `CEREBRAS_API_KEY` |
+| `fireworks` | llama-v3p1-70b-instruct, mixtral-8x22b | `FIREWORKS_API_KEY` |
+| `sambanova` | Meta-Llama-3.1-405B-Instruct, Meta-Llama-3.1-70B-Instruct | `SAMBANOVA_API_KEY` |
+| `stub` | Simulated ~90% pass rate | *(none)* |
+
+---
+
+## Quick Start
+
+```bash
+npm install
+cp .env.example .env
+# Fill in your API key(s) in .env
+
+# Run with Groq (default model: llama-3.3-70b-versatile)
+npm run bench:groq
+
+# Run with OpenAI, override model
+npx ts-node src/runner.ts --provider openai --model gpt-4o-mini --trials 25
+
+# Run all providers sequentially
+npm run bench:all
+
+# Offline dev with stub
+npm run bench:stub
+```
+
+---
+
+## CLI Options
+
+```
+--provider   openai|groq|gemini|anthropic|xai|mistral|deepseek|cerebras|fireworks|sambanova|stub
+--model      Override provider default model
+--trials     Number of trials (default: 25)
+--noise-words  Noise word count (default: 200)
+--skill-id   Skill to test (default: weather)
+--position   start|middle|end|random (default: random)
+```
 
 ---
 
@@ -44,51 +91,45 @@ The full [skill-bench.md](https://github.com/nothinginfinity/skill-bench.md) pro
 
 ```
 Skill-Haystack/
-├── README.md                  ← You are here
-├── SPEC.md                    ← Benchmark specification
-├── manifest.json              ← Single-skill manifest (swappable)
+├── README.md
+├── SPEC.md
+├── manifest.json              ← Skill definitions + tokens
+├── .env.example               ← Copy to .env, add your keys
 ├── src/
 │   ├── haystack-generator.ts  ← Builds the noisy document
-│   ├── runner.ts              ← Trial loop: run N times, track pass/fail
-│   └── llm-stub.ts            ← Swappable LLM call interface
+│   ├── runner.ts              ← Trial loop + result output
+│   └── llm-stub.ts            ← All provider implementations
 ├── results/
-│   └── .gitkeep
+│   └── .gitkeep               ← Results written here (gitignored)
 └── ui/
-    └── index.html             ← Bob's prototype UI (haystack visualizer)
+    └── index.html             ← In-browser demo UI
 ```
 
 ---
 
-## Token Format
+## Result Format
 
-Inherited from skill-bench.md:
+Each run writes a JSON file to `results/`:
 
-```
-BENCH-{id}::{unique_number}
-```
-
-A trial **passes** if the model's output contains the exact expected token. A trial **fails** if the token is absent, malformed, or belongs to a different skill.
-
----
-
-## Running
-
-```bash
-# Install deps
-npm install
-
-# Run 25 trials with default config
-npx ts-node src/runner.ts --trials 25
-
-# Custom noise density
-npx ts-node src/runner.ts --trials 25 --noise-words 1000 --skill-id weather
+```json
+{
+  "run_id": "2026-04-26T18:00:00.000Z",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "skill_id": "weather",
+  "noise_words": 200,
+  "trials": 25,
+  "pass_rate": 0.92,
+  "failure_breakdown": { "token_absent": 2, "wrong_token": 0, ... },
+  "position_bias": { "start": 1.0, "middle": 0.88, "end": 0.91 }
+}
 ```
 
 ---
 
 ## Relationship to skill-bench.md
 
-This repo is a focused precursor to [skill-bench.md](https://github.com/nothinginfinity/skill-bench.md). Once the single-skill haystack loop is proven and pass rates are stable across noise densities, the architecture here will inform the Phase 1 baseline of the full benchmark.
+This repo is a focused precursor to [skill-bench.md](https://github.com/nothinginfinity/skill-bench.md). Once Stage 1 pass rates are stable across providers, this architecture folds back into the full benchmark as the Phase 1 baseline.
 
 ---
 
@@ -96,8 +137,8 @@ This repo is a focused precursor to [skill-bench.md](https://github.com/nothingi
 
 - [x] Concept validated (Alice + Bob discussion, 2026-04-26)
 - [x] Initial repo scaffold
-- [ ] Haystack generator implementation
-- [ ] LLM call integration
-- [ ] First results logged to `results/`
+- [x] Multi-provider LLM integration (10 providers)
+- [ ] First real results logged
 - [ ] Stage 2: noise depth scaling
 - [ ] Stage 3: multi-skill competition
+- [ ] compare-runs.ts for cross-provider result diffing

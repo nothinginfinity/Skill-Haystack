@@ -5,7 +5,19 @@
  * Runs N independent trials, tracks pass/fail per trial, and writes results.
  *
  * Usage:
- *   npx ts-node src/runner.ts --trials 25 --noise-words 200 --skill-id weather
+ *   npx ts-node src/runner.ts [options]
+ *
+ * Options:
+ *   --provider   openai|groq|gemini|anthropic|xai|mistral|deepseek|cerebras|fireworks|sambanova|stub
+ *   --model      Override the provider's default model
+ *   --trials     Number of trials (default: 25)
+ *   --noise-words  Number of noise words (default: 200)
+ *   --skill-id   Skill to test from manifest (default: weather)
+ *   --position   start|middle|end|random (default: random)
+ *
+ * Env vars:
+ *   HAYSTACK_PROVIDER  fallback if --provider not set
+ *   <PROVIDER>_API_KEY  e.g. OPENAI_API_KEY, GROQ_API_KEY, etc.
  */
 
 import * as fs from 'fs';
@@ -14,20 +26,21 @@ import { buildHaystack, TriggerPosition } from './haystack-generator';
 import { callLLM } from './llm-stub';
 import manifest from '../manifest.json';
 
-// --- CLI arg parsing (minimal, no deps) ---
+// --- CLI arg parsing ---
 const args = process.argv.slice(2);
 const getArg = (flag: string, fallback: string) => {
   const i = args.indexOf(flag);
   return i !== -1 && args[i + 1] ? args[i + 1] : fallback;
 };
 
-const TRIALS = parseInt(getArg('--trials', '25'), 10);
+const TRIALS      = parseInt(getArg('--trials', '25'), 10);
 const NOISE_WORDS = parseInt(getArg('--noise-words', '200'), 10);
-const SKILL_ID = getArg('--skill-id', 'weather');
-const POSITION = (getArg('--position', 'random')) as TriggerPosition;
-const MODEL = getArg('--model', 'stub');
+const SKILL_ID    = getArg('--skill-id', 'weather');
+const POSITION    = getArg('--position', 'random') as TriggerPosition;
+const PROVIDER    = getArg('--provider', process.env.HAYSTACK_PROVIDER ?? 'stub');
+const MODEL       = getArg('--model', '') || undefined;
 
-// --- Resolve skill from manifest ---
+// --- Resolve skill ---
 const skill = manifest.skills.find((s) => s.id === SKILL_ID);
 if (!skill) {
   console.error(`Skill "${SKILL_ID}" not found in manifest.json`);
@@ -59,33 +72,28 @@ interface TrialResult {
 function checkOutput(output: string, expectedToken: string): { pass: boolean; failureMode?: FailureMode } {
   if (!output || output.trim() === '') return { pass: false, failureMode: 'empty_output' };
   if (output.includes(expectedToken)) return { pass: true };
-
-  // Check for malformed token (BENCH prefix present but wrong)
   if (/BENCH-[\w]+::[\w]+/.test(output)) {
     const match = output.match(/BENCH-([\w]+)::[\w]+/);
     if (match && match[1] !== SKILL_ID) return { pass: false, failureMode: 'wrong_token' };
     return { pass: false, failureMode: 'malformed_token' };
   }
-
   return { pass: false, failureMode: 'token_absent' };
 }
 
 async function runTrials() {
   console.log(`\n🌾 Skill-Haystack Runner`);
+  console.log(`   Provider:    ${PROVIDER}`);
+  console.log(`   Model:       ${MODEL ?? '(provider default)'}`);
   console.log(`   Skill:       ${skill!.name} (${SKILL_ID})`);
   console.log(`   Token:       ${skill!.token}`);
   console.log(`   Noise words: ${NOISE_WORDS}`);
   console.log(`   Trials:      ${TRIALS}`);
   console.log(`   Position:    ${POSITION}`);
-  console.log(`   Model:       ${MODEL}`);
   console.log(`─────────────────────────────────────`);
 
   const results: TrialResult[] = [];
   const failureBreakdown: Record<FailureMode, number> = {
-    token_absent: 0,
-    wrong_token: 0,
-    malformed_token: 0,
-    empty_output: 0,
+    token_absent: 0, wrong_token: 0, malformed_token: 0, empty_output: 0,
   };
   const positionResults: Record<string, { passes: number; total: number }> = {
     start: { passes: 0, total: 0 },
@@ -93,14 +101,11 @@ async function runTrials() {
     end: { passes: 0, total: 0 },
   };
 
-  // Pick a random trigger phrase once (or vary per trial — your call)
-  const triggerPhrase =
-    skill!.trigger_phrases[
-      Math.floor(Math.random() * skill!.trigger_phrases.length)
-    ];
+  const triggerPhrase = skill!.trigger_phrases[
+    Math.floor(Math.random() * skill!.trigger_phrases.length)
+  ];
 
   for (let i = 1; i <= TRIALS; i++) {
-    // Determine actual position for this trial
     const positions: TriggerPosition[] = ['start', 'middle', 'end'];
     const trialPosition: TriggerPosition =
       POSITION === 'random'
@@ -113,18 +118,28 @@ async function runTrials() {
       position: trialPosition,
     });
 
-    const { output, latencyMs } = await callLLM({
-      systemPrompt: SYSTEM_PROMPT,
-      userMessage: haystack,
-      model: MODEL,
-    });
+    let output = '';
+    let latencyMs = 0;
+    try {
+      const res = await callLLM({
+        systemPrompt: SYSTEM_PROMPT,
+        userMessage: haystack,
+        provider: PROVIDER,
+        model: MODEL,
+      });
+      output = res.output;
+      latencyMs = res.latencyMs;
+    } catch (err: any) {
+      console.error(`   Trial ${String(i).padStart(2, '0')}  ✗ ERROR: ${err.message}`);
+      results.push({ trial: i, pass: false, failureMode: 'empty_output', output: '', latencyMs: 0, triggerPosition: trialPosition });
+      failureBreakdown.empty_output++;
+      continue;
+    }
 
     const { pass, failureMode } = checkOutput(output, skill!.token);
-
     if (!pass && failureMode) failureBreakdown[failureMode]++;
     positionResults[trialPosition].total++;
     if (pass) positionResults[trialPosition].passes++;
-
     results.push({ trial: i, pass, failureMode, output, latencyMs, triggerPosition: trialPosition });
 
     const icon = pass ? '✅' : '❌';
@@ -139,11 +154,11 @@ async function runTrials() {
   console.log(`   Pass rate: ${passes}/${TRIALS} = ${(passRate * 100).toFixed(1)}%`);
   console.log(`   Failures:  ${JSON.stringify(failureBreakdown)}`);
 
-  // --- Write results ---
   const runId = new Date().toISOString();
   const resultData = {
     run_id: runId,
-    model: MODEL,
+    provider: PROVIDER,
+    model: MODEL ?? '(provider default)',
     skill_id: SKILL_ID,
     trigger_phrase: triggerPhrase,
     noise_words: NOISE_WORDS,
@@ -154,8 +169,7 @@ async function runTrials() {
     failure_breakdown: failureBreakdown,
     position_bias: Object.fromEntries(
       Object.entries(positionResults).map(([pos, { passes: p, total }]) => [
-        pos,
-        total > 0 ? p / total : null,
+        pos, total > 0 ? p / total : null,
       ])
     ),
     trial_log: results,
