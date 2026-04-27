@@ -4,6 +4,10 @@
  * Generates a noisy document with a skill trigger phrase injected at a
  * configurable position. The model must detect the trigger and emit the
  * correct BENCH token.
+ *
+ * IMPORTANT: Noise entries use the same BENCH-{word}::{number} format as real
+ * tokens so the model cannot trivially find the answer by structural pattern-
+ * matching. It must match the skill concept to the correct token.
  */
 
 export type TriggerPosition = 'start' | 'middle' | 'end' | 'random';
@@ -14,39 +18,43 @@ export interface HaystackConfig {
   position: TriggerPosition;
 }
 
-/** Generic noise words to pad the document. Extend as needed. */
-const NOISE_WORDS = [
-  'the', 'a', 'an', 'and', 'but', 'or', 'in', 'on', 'at', 'to', 'for',
-  'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during',
-  'before', 'after', 'above', 'below', 'between', 'out', 'off', 'over',
-  'under', 'again', 'then', 'once', 'here', 'there', 'when', 'where',
-  'why', 'how', 'all', 'each', 'every', 'both', 'few', 'more', 'most',
-  'other', 'some', 'such', 'than', 'too', 'very', 'just', 'because',
-  'as', 'until', 'while', 'although', 'however', 'therefore', 'moreover',
-  'furthermore', 'nevertheless', 'otherwise', 'instead', 'meanwhile',
-  'subsequently', 'consequently', 'accordingly', 'approximately',
-  'specifically', 'generally', 'recently', 'previously', 'currently',
-  'typically', 'usually', 'frequently', 'occasionally', 'rarely',
-  'almost', 'also', 'already', 'always', 'never', 'often', 'since',
-  'still', 'yet', 'today', 'tomorrow', 'yesterday', 'soon', 'now',
+/**
+ * Fake skill words used to generate noise tokens in the same
+ * BENCH-{word}::{number} format as real tokens.
+ * Drawn from plausible-sounding but semantically neutral words so the model
+ * cannot distinguish real from fake by content alone — only by skill match.
+ */
+const FAKE_SKILL_WORDS = [
+  'foghorn', 'spanner', 'caliper', 'rivet', 'torque', 'lumen',
+  'kelvin', 'pascal', 'farad', 'tesla', 'hertz', 'coulomb',
+  'ampere', 'newton', 'watt', 'joule', 'ohm', 'henry',
+  'candela', 'mole', 'becquerel', 'sievert', 'gray', 'lux',
+  'weber', 'siemens', 'radian', 'steradian', 'katal', 'dalton',
+  'fermi', 'angstrom', 'barn', 'torr', 'poise', 'stokes',
+  'neper', 'bel', 'phon', 'sone', 'jansky', 'kayser',
 ];
 
-/** Generate N random noise words from the pool. */
+/** Generate N random fake BENCH-format tokens from the pool. */
 function generateNoise(count: number): string[] {
-  const words: string[] = [];
-  for (let i = 0; i < count; i++) {
-    words.push(NOISE_WORDS[Math.floor(Math.random() * NOISE_WORDS.length)]);
-  }
-  return words;
+  return Array.from({ length: count }, () => {
+    const word = FAKE_SKILL_WORDS[Math.floor(Math.random() * FAKE_SKILL_WORDS.length)];
+    const num = String(Math.floor(Math.random() * 9000) + 1000);
+    return `BENCH-${word}::${num}`;
+  });
 }
 
 /**
- * Build a haystack document: noise words with the trigger phrase
- * injected at the specified position.
+ * Build a haystack document: fake BENCH-format noise tokens with the trigger
+ * phrase injected at the specified position.
+ *
+ * The trigger phrase should itself be a real BENCH token (e.g. "BENCH-weather::4821")
+ * so it is structurally indistinguishable from the surrounding noise tokens.
+ * The model must identify it by matching the requested skill concept, not by
+ * spotting a structural anomaly.
  */
 export function buildHaystack(config: HaystackConfig): string {
   const { triggerPhrase, noiseWordCount, position } = config;
-  const noiseWords = generateNoise(noiseWordCount);
+  const noiseTokens = generateNoise(noiseWordCount);
 
   let insertIndex: number;
   const resolvedPosition =
@@ -61,19 +69,19 @@ export function buildHaystack(config: HaystackConfig): string {
       insertIndex = 0;
       break;
     case 'end':
-      insertIndex = noiseWords.length;
+      insertIndex = noiseTokens.length;
       break;
     case 'middle':
     default:
-      insertIndex = Math.floor(noiseWords.length / 2);
+      insertIndex = Math.floor(noiseTokens.length / 2);
       break;
   }
 
-  const words = [
-    ...noiseWords.slice(0, insertIndex),
+  const tokens = [
+    ...noiseTokens.slice(0, insertIndex),
     triggerPhrase,
-    ...noiseWords.slice(insertIndex),
+    ...noiseTokens.slice(insertIndex),
   ];
 
-  return words.join(' ') + '.';
+  return tokens.join('\n');
 }
