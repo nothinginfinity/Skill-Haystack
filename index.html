@@ -93,7 +93,7 @@ select:focus{border-color:var(--primary);outline:none}
 }
 .slider-val{
   font-size:13px;font-weight:700;color:var(--primary);
-  min-width:48px;text-align:right;font-variant-numeric:tabular-nums;
+  min-width:54px;text-align:right;font-variant-numeric:tabular-nums;
 }
 .zero-tag{
   display:inline-flex;align-items:center;gap:4px;
@@ -113,6 +113,19 @@ select:focus{border-color:var(--primary);outline:none}
   background:var(--primary-dim);border-radius:var(--r-sm);padding:4px 8px;
   word-break:break-all;
 }
+.multi-skill-banner{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:10px 12px;margin-bottom:14px;
+  font-size:12px;color:var(--text-muted);line-height:1.6;
+}
+.multi-skill-banner strong{color:var(--gold);font-weight:700}
+.decoy-list{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
+.decoy-tag{
+  font-size:10px;font-family:var(--mono);padding:2px 7px;
+  border-radius:var(--r-full);background:var(--surface-3);
+  border:1px solid var(--border);color:var(--text-faint);
+}
+.decoy-tag.target{background:var(--primary-dim);border-color:var(--primary-border);color:var(--primary);}
 .haystack-box{
   background:var(--surface-2);border:1px solid var(--border);
   border-radius:var(--r-md);padding:12px;
@@ -121,6 +134,7 @@ select:focus{border-color:var(--primary);outline:none}
   word-break:break-word;-webkit-overflow-scrolling:touch;
 }
 .haystack-box .trigger{color:var(--primary);font-weight:700;background:var(--primary-dim);border-radius:3px;padding:0 3px;}
+.haystack-box .decoy{color:var(--gold);background:var(--gold-dim);border-radius:3px;padding:0 3px;}
 .preview-meta{font-size:11px;color:var(--text-faint);margin-top:8px}
 .run-btn{
   width:100%;padding:15px;
@@ -204,6 +218,14 @@ select:focus{border-color:var(--primary);outline:none}
 }
 .mode-btn.active{background:var(--primary-dim);border-color:var(--primary-border);color:var(--primary)}
 .mode-btn:active{opacity:0.7}
+.tab-row{display:flex;gap:6px;margin-bottom:14px}
+.tab-btn{
+  flex:1;padding:7px 4px;border-radius:var(--r-md);font-size:11px;font-weight:600;
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text-muted);
+  transition:all 0.15s;
+}
+.tab-btn.active{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
+.tab-btn:active{opacity:0.7}
 [data-theme="light"] {
   --bg:#f7f6f2; --surface:#f9f8f5; --surface-2:#f3f0ec; --surface-3:#e6e4df;
   --border:rgba(0,0,0,0.07); --border-med:rgba(0,0,0,0.12);
@@ -220,7 +242,7 @@ select:focus{border-color:var(--primary);outline:none}
         <path d="M3 13 L8 3 L13 13" stroke="#4f98a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
       </svg>
     </div>
-    <span class="logo-name">Skill-Haystack <span class="logo-version">v3</span></span>
+    <span class="logo-name">Skill-Haystack <span class="logo-version">v4</span></span>
   </div>
   <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
     <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -231,12 +253,25 @@ select:focus{border-color:var(--primary);outline:none}
   <div class="card">
     <div class="card-header"><span class="card-title">Config</span></div>
     <div class="card-body">
+
+      <!-- API mode toggle -->
       <div class="mode-row">
         <button class="mode-btn active" id="modeSimBtn" onclick="setMode('simulate')">Simulate</button>
         <button class="mode-btn" id="modeLiveBtn" onclick="setMode('live')">Live API</button>
       </div>
+
+      <!-- Haystack mode: Single vs Multi-skill -->
       <div class="field">
-        <label class="field-label">Skill</label>
+        <label class="field-label">Haystack Mode</label>
+        <div class="tab-row">
+          <button class="tab-btn active" id="tabSingle" onclick="setHaystackMode('single')">Single Skill</button>
+          <button class="tab-btn" id="tabMulti" onclick="setHaystackMode('multi')">Multi-Skill</button>
+        </div>
+      </div>
+
+      <!-- Target skill -->
+      <div class="field">
+        <label class="field-label" id="skillLabel">Skill</label>
         <div class="select-wrap">
           <select id="skillSelect" onchange="onSkillChange()">
             <optgroup label="— Benchmark Skills (Fidelity Scored) —">
@@ -253,16 +288,30 @@ select:focus{border-color:var(--primary);outline:none}
         </div>
       </div>
       <div id="skillInfoBox" class="skill-info"></div>
+
+      <!-- Multi-skill: decoy count -->
+      <div class="field" id="decoyField" style="display:none">
+        <label class="field-label">Competing Skills (decoys buried alongside target)</label>
+        <div class="slider-row">
+          <input type="range" id="decoySlider" min="1" max="9" step="1" value="4">
+          <span class="slider-val" id="decoyVal">4</span>
+        </div>
+      </div>
+      <div id="multiSkillBanner" style="display:none"></div>
+
+      <!-- Noise words slider: 0 – 20 000 -->
       <div class="field">
         <label class="field-label">
           Noise Words
           <span id="zeroTag" class="zero-tag" style="display:none">BASELINE</span>
         </label>
         <div class="slider-row">
-          <input type="range" id="noiseSlider" min="0" max="2000" step="50" value="0">
+          <input type="range" id="noiseSlider" min="0" max="50" step="1" value="0">
           <span class="slider-val" id="noiseVal">0</span>
         </div>
+        <div style="font-size:11px;color:var(--text-faint);margin-top:4px" id="noiseHint">Drag right to increase noise depth (up to 20 000 words)</div>
       </div>
+
       <div class="field">
         <label class="field-label">Trials</label>
         <div class="slider-row">
@@ -281,6 +330,7 @@ select:focus{border-color:var(--primary);outline:none}
           </select>
         </div>
       </div>
+
       <div id="liveFields" style="display:none">
         <div class="field">
           <label class="field-label">Provider</label>
@@ -333,6 +383,7 @@ select:focus{border-color:var(--primary);outline:none}
 </div>
 
 <script>
+// ── Theme ──
 const root = document.documentElement;
 const themeBtn = document.getElementById('themeBtn');
 const sunSVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
@@ -345,6 +396,7 @@ themeBtn.addEventListener('click', () => {
   document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'dark' ? '#0f0f0d' : '#f7f6f2');
 });
 
+// ── Mode ──
 let mode = 'simulate';
 function setMode(m) {
   mode = m;
@@ -353,13 +405,55 @@ function setMode(m) {
   document.getElementById('liveFields').style.display = m === 'live' ? 'block' : 'none';
 }
 
-// ── SKILLS ──
+let haystackMode = 'single';
+function setHaystackMode(m) {
+  haystackMode = m;
+  document.getElementById('tabSingle').classList.toggle('active', m === 'single');
+  document.getElementById('tabMulti').classList.toggle('active', m === 'multi');
+  document.getElementById('decoyField').style.display = m === 'multi' ? 'block' : 'none';
+  document.getElementById('skillLabel').textContent = m === 'multi' ? 'Target Skill' : 'Skill';
+  updateMultiBanner();
+  updatePreview();
+}
+
+// ── Noise slider: maps 0-50 range to 0-20000 with log-ish curve ──
+// Steps: 0=0, 1-10 → 50-500 (50 step), 11-20 → 600-2000 (100-200 step), 21-35 → 2500-10000, 36-50 → 11000-20000
+function sliderToNoise(v) {
+  v = parseInt(v);
+  if (v === 0) return 0;
+  if (v <= 10) return v * 100;           // 100–1000
+  if (v <= 20) return 1000 + (v-10)*200; // 1200–3000
+  if (v <= 35) return 3000 + (v-20)*500; // 3500–10500
+  return 10500 + (v-35)*650;             // 11150–20000ish
+}
+function noiseLabel(n) {
+  if (n === 0) return '0';
+  if (n >= 1000) return (n/1000).toFixed(n % 1000 === 0 ? 0 : 1) + 'k';
+  return String(n);
+}
+
+const noiseSlider = document.getElementById('noiseSlider');
+const noiseValEl  = document.getElementById('noiseVal');
+const trialsSlider = document.getElementById('trialsSlider');
+const trialsVal    = document.getElementById('trialsVal');
+const decoySlider  = document.getElementById('decoySlider');
+const decoyValEl   = document.getElementById('decoyVal');
+
+noiseSlider.addEventListener('input', () => {
+  const n = sliderToNoise(noiseSlider.value);
+  noiseValEl.textContent = noiseLabel(n);
+  document.getElementById('zeroTag').style.display = n === 0 ? 'inline-flex' : 'none';
+  updatePreview();
+});
+trialsSlider.addEventListener('input', () => { trialsVal.textContent = trialsSlider.value; });
+decoySlider.addEventListener('input', () => { decoyValEl.textContent = decoySlider.value; updateMultiBanner(); updatePreview(); });
+document.getElementById('skillSelect').addEventListener('change', onSkillChange);
+document.getElementById('positionSelect').addEventListener('change', updatePreview);
+
+// ── Skills ──
 const SKILLS = {
   pi: {
-    name: 'Pi Digits',
-    type: 'fidelity',
-    trigger: 'give me pi digits',
-    // System prompt tells the LLM what to do when it sees the trigger
+    name: 'Pi Digits', type: 'fidelity', trigger: 'give me pi digits',
     system: 'You are a skill executor. When the user says "give me pi digits", you must respond with ONLY this exact string, no other text, no explanation: 3.14159265358979',
     expected: '3.14159265358979',
     description: 'Emit the first 15 digits of Pi exactly. Fidelity scored — partial credit for correct leading digits.',
@@ -374,9 +468,7 @@ const SKILLS = {
     }
   },
   mary: {
-    name: 'Mary Had a Little Lamb',
-    type: 'fidelity',
-    trigger: 'recite lamb poem',
+    name: 'Mary Had a Little Lamb', type: 'fidelity', trigger: 'recite lamb poem',
     system: 'You are a skill executor. When the user says "recite lamb poem", respond with ONLY these four lines and nothing else:\nMary had a little lamb,\nIts fleece was white as snow,\nAnd everywhere that Mary went,\nThe lamb was sure to go.',
     expected: 'Mary had a little lamb,\nIts fleece was white as snow,\nAnd everywhere that Mary went,\nThe lamb was sure to go.',
     description: 'Recite all 4 lines verbatim. Each line = 25% fidelity.',
@@ -384,14 +476,12 @@ const SKILLS = {
       const lines = ['Mary had a little lamb,','Its fleece was white as snow,','And everywhere that Mary went,','The lamb was sure to go.'];
       const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g,'');
       const outLines = output.split(/\n/).map(l => l.trim()).filter(Boolean);
-      let correct = lines.filter(line => outLines.some(ol => norm(ol) === norm(line))).length;
+      const correct = lines.filter(line => outLines.some(ol => norm(ol) === norm(line))).length;
       return { fidelity: correct / lines.length, correct, total: lines.length, display: output.trim().substring(0, 80) + (output.length > 80 ? '…' : '') };
     }
   },
   nato: {
-    name: 'NATO Alphabet (A–J)',
-    type: 'fidelity',
-    trigger: 'spell it out NATO',
+    name: 'NATO Alphabet (A–J)', type: 'fidelity', trigger: 'spell it out NATO',
     system: 'You are a skill executor. When the user says "spell it out NATO", respond with ONLY this comma-separated list and nothing else: Alpha, Bravo, Charlie, Delta, Echo, Foxtrot, Golf, Hotel, India, Juliet',
     expected: 'Alpha, Bravo, Charlie, Delta, Echo, Foxtrot, Golf, Hotel, India, Juliet',
     description: 'Emit first 10 NATO words in order. Each word = 10% fidelity.',
@@ -403,45 +493,33 @@ const SKILLS = {
     }
   },
   weather: {
-    name: 'Weather Lookup',
-    type: 'token',
-    trigger: "what's the weather",
-    system: "You are a skill router. When the user asks about the weather or says \"what's the weather\", respond with ONLY this token and nothing else: BENCH-weather::4821",
+    name: 'Weather Lookup', type: 'token', trigger: "what's the weather",
+    system: "You are a skill router. When the user asks about the weather, respond with ONLY this token and nothing else: BENCH-weather::4821",
     expected: 'BENCH-weather::4821',
     description: 'Emit exact token on weather trigger. Pass/fail.',
-    score(output) {
-      const pass = output.trim() === 'BENCH-weather::4821';
-      return { fidelity: pass ? 1 : 0, correct: pass ? 1 : 0, total: 1, display: output.trim() };
-    }
+    score(output) { const pass = output.trim() === 'BENCH-weather::4821'; return { fidelity: pass?1:0, correct: pass?1:0, total:1, display: output.trim() }; }
   },
   translate: {
-    name: 'Language Translation',
-    type: 'token',
-    trigger: 'translate this',
+    name: 'Language Translation', type: 'token', trigger: 'translate this',
     system: 'You are a skill router. When the user says "translate this", respond with ONLY this token and nothing else: BENCH-translate::7193',
     expected: 'BENCH-translate::7193',
     description: 'Emit exact token on translate trigger. Pass/fail.',
-    score(output) {
-      const pass = output.trim() === 'BENCH-translate::7193';
-      return { fidelity: pass ? 1 : 0, correct: pass ? 1 : 0, total: 1, display: output.trim() };
-    }
+    score(output) { const pass = output.trim() === 'BENCH-translate::7193'; return { fidelity: pass?1:0, correct: pass?1:0, total:1, display: output.trim() }; }
   },
   summarize: {
-    name: 'Document Summarizer',
-    type: 'token',
-    trigger: 'summarize this',
+    name: 'Document Summarizer', type: 'token', trigger: 'summarize this',
     system: 'You are a skill router. When the user says "summarize this", respond with ONLY this token and nothing else: BENCH-summarize::3047',
     expected: 'BENCH-summarize::3047',
     description: 'Emit exact token on summarize trigger. Pass/fail.',
-    score(output) {
-      const pass = output.trim() === 'BENCH-summarize::3047';
-      return { fidelity: pass ? 1 : 0, correct: pass ? 1 : 0, total: 1, display: output.trim() };
-    }
+    score(output) { const pass = output.trim() === 'BENCH-summarize::3047'; return { fidelity: pass?1:0, correct: pass?1:0, total:1, display: output.trim() }; }
   }
 };
+const SKILL_KEYS = Object.keys(SKILLS);
 
 function currentSkill() { return SKILLS[document.getElementById('skillSelect').value]; }
-function onSkillChange() { updateSkillInfo(); updatePreview(); }
+function currentSkillKey() { return document.getElementById('skillSelect').value; }
+function onSkillChange() { updateSkillInfo(); updateMultiBanner(); updatePreview(); }
+
 function updateSkillInfo() {
   const s = currentSkill();
   document.getElementById('skillInfoBox').innerHTML =
@@ -450,21 +528,30 @@ function updateSkillInfo() {
      <div class="skill-info-expected">${s.expected.replace(/\n/g,' · ')}</div>`;
 }
 
-const noiseSlider = document.getElementById('noiseSlider');
-const noiseVal = document.getElementById('noiseVal');
-const trialsSlider = document.getElementById('trialsSlider');
-const trialsVal = document.getElementById('trialsVal');
-noiseSlider.addEventListener('input', () => {
-  const v = parseInt(noiseSlider.value);
-  noiseVal.textContent = v;
-  document.getElementById('zeroTag').style.display = v === 0 ? 'inline-flex' : 'none';
-  updatePreview();
-});
-trialsSlider.addEventListener('input', () => { trialsVal.textContent = trialsSlider.value; });
-document.getElementById('skillSelect').addEventListener('change', onSkillChange);
-document.getElementById('positionSelect').addEventListener('change', updatePreview);
+function getDecoyKeys() {
+  const target = currentSkillKey();
+  return SKILL_KEYS.filter(k => k !== target).slice(0, parseInt(decoySlider.value));
+}
 
-const NOISE_WORDS = ['the','a','an','and','but','or','in','on','at','to','for','with','by','from','up',
+function updateMultiBanner() {
+  const banner = document.getElementById('multiSkillBanner');
+  if (haystackMode !== 'multi') { banner.style.display = 'none'; return; }
+  banner.style.display = 'block';
+  const target = currentSkill();
+  const decoys = getDecoyKeys().map(k => SKILLS[k]);
+  const tags = `<div class="decoy-list">
+    <span class="decoy-tag target">● ${target.name}</span>
+    ${decoys.map(d => `<span class="decoy-tag">○ ${d.name}</span>`).join('')}
+  </div>`;
+  banner.innerHTML = `<div class="multi-skill-banner">
+    <strong>${decoys.length + 1} skills buried in haystack.</strong> The LLM must find and execute <strong style="color:var(--primary)">${target.name}</strong> while ignoring ${decoys.length} decoy${decoys.length > 1 ? 's' : ''}.
+    ${tags}
+  </div>`;
+}
+
+// ── Noise words ──
+const NOISE_WORDS = [
+  'the','a','an','and','but','or','in','on','at','to','for','with','by','from','up',
   'about','into','through','before','after','above','below','between','out','over','under',
   'again','then','here','there','when','where','how','all','each','every','both','few','more',
   'most','other','some','than','too','very','just','because','as','until','while','however',
@@ -473,37 +560,120 @@ const NOISE_WORDS = ['the','a','an','and','but','or','in','on','at','to','for','
   'always','never','often','since','still','yet','alpha','beta','delta','node','sync','flow',
   'data','stream','buffer','cache','vector','scalar','parse','render','compile','execute',
   'route','path','query','schema','model','field','value','key','record','cursor','offset',
-  'metric','label','tag','measure','sample','average','median','index','range','scope'];
+  'metric','label','tag','measure','sample','average','median','index','range','scope',
+  'process','system','output','input','signal','result','window','filter','token','layer',
+  'block','chain','stack','heap','loop','branch','depth','width','length','size','count',
+  'group','class','type','name','list','map','set','tree','graph','edge','node','leaf',
+  'root','base','core','unit','step','phase','cycle','rate','level','state','mode','flag'
+];
 function rw() { return NOISE_WORDS[Math.floor(Math.random() * NOISE_WORDS.length)]; }
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function buildHaystack(noiseCount, position, skill) {
-  if (noiseCount === 0) return null;
+// ── Haystack builder ──
+// positions: array of {key: '__SKILL__' or decoy key} to splice in
+function buildHaystackWords(noiseCount, position, insertions) {
+  // insertions: array of marker strings to place
   const words = Array.from({length: noiseCount}, rw);
   const pos = position === 'random' ? ['start','middle','end'][Math.floor(Math.random()*3)] : position;
-  const idx = pos === 'start' ? 0 : pos === 'end' ? words.length : Math.floor(words.length / 2);
-  // Embed the full skill system prompt as the "needle"
-  words.splice(idx, 0, '__SKILL__');
-  return { words, skillIdx: idx, position: pos };
+  if (insertions.length === 1) {
+    const idx = pos === 'start' ? 0 : pos === 'end' ? words.length : Math.floor(words.length / 2);
+    words.splice(idx, 0, insertions[0]);
+    return words;
+  }
+  // multiple insertions: spread evenly across the document
+  const spread = Math.floor(noiseCount / (insertions.length + 1));
+  let offset = 0;
+  insertions.forEach((ins, i) => {
+    const idx = spread * (i + 1) + offset;
+    words.splice(idx, 0, ins);
+    offset++;
+  });
+  return words;
 }
 
 function updatePreview() {
-  const n = parseInt(noiseSlider.value);
+  const noiseCount = sliderToNoise(noiseSlider.value);
   const skill = currentSkill();
-  if (n === 0) {
+  const isMulti = haystackMode === 'multi';
+
+  if (noiseCount === 0) {
     document.getElementById('haystackPreview').innerHTML =
       `<span class="trigger">${esc(skill.trigger)}</span>`;
-    document.getElementById('previewMeta').textContent = 'Zero-noise baseline — skill instruction sent directly as system prompt';
-  } else {
-    const h = buildHaystack(n, document.getElementById('positionSelect').value, skill);
-    const html = h.words.map(w => w === '__SKILL__'
-      ? `<span class="trigger">[SKILL INSTRUCTION]</span>` : esc(w)).join(' ') + '.';
+    document.getElementById('previewMeta').textContent = 'Zero-noise baseline — skill instruction in system prompt, trigger in user message';
+    return;
+  }
+
+  let words;
+  if (isMulti) {
+    const decoys = getDecoyKeys();
+    const insertions = ['__TARGET__', ...decoys.map(k => '__DECOY_' + k + '__')];
+    words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, insertions);
+    const html = words.map(w => {
+      if (w === '__TARGET__') return `<span class="trigger">[TARGET: ${esc(skill.name)}]</span>`;
+      if (w.startsWith('__DECOY_')) {
+        const k = w.replace('__DECOY_','').replace('__','');
+        return `<span class="decoy">[DECOY: ${esc(SKILLS[k]?.name || k)}]</span>`;
+      }
+      return esc(w);
+    }).join(' ');
     document.getElementById('haystackPreview').innerHTML = html;
-    document.getElementById('previewMeta').textContent = `${n} noise words · skill at position ~${h.skillIdx} (${h.position})`;
+    document.getElementById('previewMeta').textContent = `${noiseLabel(noiseCount)} noise words · 1 target + ${decoys.length} decoy skill${decoys.length>1?'s':''}`;
+  } else {
+    words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, ['__SKILL__']);
+    const html = words.map(w => w === '__SKILL__'
+      ? `<span class="trigger">[SKILL INSTRUCTION]</span>` : esc(w)).join(' ');
+    document.getElementById('haystackPreview').innerHTML = html;
+    document.getElementById('previewMeta').textContent = `${noiseLabel(noiseCount)} noise words · 1 skill buried`;
   }
 }
 
-// ── PROVIDERS ──
+// ── Message builder ──
+function buildMessages(skill, noiseCount) {
+  const isMulti = haystackMode === 'multi';
+
+  if (noiseCount === 0) {
+    // Zero noise: direct system/user split
+    let systemContent = skill.system;
+    if (isMulti) {
+      const decoys = getDecoyKeys().map(k => SKILLS[k]);
+      const decoyInstructions = decoys.map(d => d.system).join('\n');
+      systemContent = `You are a skill router. Multiple skill instructions are provided below. The user message will contain a trigger phrase. Match it to the correct skill and execute ONLY that skill\'s instruction. Ignore all other skills.\n\n${decoyInstructions}\n\n${skill.system}`;
+    }
+    return [
+      { role: 'system', content: systemContent },
+      { role: 'user',   content: skill.trigger }
+    ];
+  }
+
+  // With noise: embed skill instructions in document
+  if (!isMulti) {
+    const words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, ['__SKILL__']);
+    const doc = words.map(w => w === '__SKILL__' ? skill.system : w).join(' ') + '.';
+    return [
+      { role: 'system', content: 'You are a skill router. Read the entire document the user provides. Find the embedded skill instruction and execute it exactly. Output only what the skill instruction specifies — no commentary.' },
+      { role: 'user',   content: doc + '\n\n' + skill.trigger }
+    ];
+  } else {
+    // Multi-skill with noise
+    const decoyKeys = getDecoyKeys();
+    const insertions = ['__TARGET__', ...decoyKeys.map(k => '__DECOY_' + k + '__')];
+    const words = buildHaystackWords(noiseCount, document.getElementById('positionSelect').value, insertions);
+    const doc = words.map(w => {
+      if (w === '__TARGET__') return skill.system;
+      if (w.startsWith('__DECOY_')) {
+        const k = w.replace('__DECOY_','').replace('__','');
+        return SKILLS[k]?.system || '';
+      }
+      return w;
+    }).join(' ') + '.';
+    return [
+      { role: 'system', content: 'You are a skill router. The user message contains a long document with multiple embedded skill instructions mixed into noise words. Find all skill instructions. Identify which one matches the trigger phrase at the end, and execute ONLY that one. Output only what that skill instruction specifies — no commentary, no explanation.' },
+      { role: 'user',   content: doc + '\n\nTrigger: ' + skill.trigger }
+    ];
+  }
+}
+
+// ── Providers ──
 const PROVIDERS = {
   groq_instant: { url:'https://api.groq.com/openai/v1/chat/completions', model:'llama-3.1-8b-instant',    compat:'openai' },
   groq_70b:     { url:'https://api.groq.com/openai/v1/chat/completions', model:'llama-3.3-70b-versatile', compat:'openai' },
@@ -514,98 +684,80 @@ const PROVIDERS = {
   gemini:       { url:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', model:'', compat:'gemini' },
 };
 
-// Build messages array:
-// - Zero noise: system = skill instruction, user = trigger phrase
-// - With noise:  system = "you are a skill router reading a document", user = document with skill buried in noise
-function buildMessages(skill, noiseCount) {
-  if (noiseCount === 0) {
-    return [
-      { role: 'system', content: skill.system },
-      { role: 'user',   content: skill.trigger }
-    ];
-  } else {
-    const h = buildHaystack(noiseCount, document.getElementById('positionSelect').value, skill);
-    const doc = h.words.map(w => w === '__SKILL__' ? skill.system : w).join(' ') + '.';
-    return [
-      { role: 'system', content: 'You are a skill router. Read the entire document the user provides. Find any embedded skill instruction and execute it exactly as instructed. Output only what the skill instruction specifies — no commentary, no explanation.' },
-      { role: 'user',   content: doc }
-    ];
-  }
-}
-
 async function callLLM(skill, noiseCount) {
   const provKey = document.getElementById('providerSelect').value;
-  const apiKey = document.getElementById('apiKey').value.trim();
+  const apiKey  = document.getElementById('apiKey').value.trim();
   const p = PROVIDERS[provKey];
   const messages = buildMessages(skill, noiseCount);
   try {
-    let res, text, rawErr = null;
+    let text = '', rawErr = null;
     if (p.compat === 'openai') {
-      res = await fetch(p.url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-        body: JSON.stringify({ model: p.model, messages, max_tokens: 200, temperature: 0 })
+      const res = await fetch(p.url, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+        body: JSON.stringify({ model:p.model, messages, max_tokens:300, temperature:0 })
       });
       const d = await res.json();
       if (d.error) rawErr = d.error.message || JSON.stringify(d.error);
       text = d.choices?.[0]?.message?.content?.trim() || '';
     } else if (p.compat === 'anthropic') {
-      res = await fetch(p.url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model: p.model, max_tokens: 200, system: messages[0].content, messages: [messages[1]] })
+      const res = await fetch(p.url, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+        body: JSON.stringify({ model:p.model, max_tokens:300, system:messages[0].content, messages:[messages[1]] })
       });
       const d = await res.json();
       if (d.error) rawErr = d.error.message || JSON.stringify(d.error);
       text = d.content?.[0]?.text?.trim() || '';
     } else if (p.compat === 'gemini') {
-      const sysInstr = messages[0].content;
-      const userMsg  = messages[1].content;
-      res = await fetch(`${p.url}?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch(`${p.url}?key=${apiKey}`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: sysInstr }] },
-          contents: [{ parts: [{ text: userMsg }] }],
-          generationConfig: { maxOutputTokens: 200, temperature: 0 }
+          systemInstruction:{ parts:[{ text:messages[0].content }] },
+          contents:[{ parts:[{ text:messages[1].content }] }],
+          generationConfig:{ maxOutputTokens:300, temperature:0 }
         })
       });
       const d = await res.json();
       if (d.error) rawErr = d.error.message || JSON.stringify(d.error);
       text = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
     }
-    if (rawErr) return { fidelity: 0, correct: 0, total: 1, display: 'API ERR: ' + rawErr.substring(0, 80), output: rawErr, isErr: true };
-    const scored = skill.score(text);
-    return { ...scored, output: text };
+    if (rawErr) return { fidelity:0, correct:0, total:1, display:'API ERR: '+rawErr.substring(0,80), output:rawErr, isErr:true };
+    return { ...skill.score(text), output:text };
   } catch(e) {
-    return { fidelity: 0, correct: 0, total: 1, display: 'FETCH ERR: ' + e.message.substring(0,60), output: e.message, isErr: true };
+    return { fidelity:0, correct:0, total:1, display:'FETCH ERR: '+e.message.substring(0,60), output:e.message, isErr:true };
   }
 }
 
 async function simulateTrial(skill, noiseCount) {
-  await new Promise(r => setTimeout(r, 50 + Math.random() * 80));
-  const baseFidelity = noiseCount === 0 ? 0.97 : Math.max(0, 0.92 - (noiseCount / 2000) * 0.75);
+  await new Promise(r => setTimeout(r, 40 + Math.random() * 80));
+  const isMulti = haystackMode === 'multi';
+  const decoyPenalty = isMulti ? parseInt(decoySlider.value) * 0.04 : 0;
+  const depthPenalty = noiseCount === 0 ? 0 : Math.min(0.6, (noiseCount / 20000) * 0.7);
+  const baseFidelity = Math.max(0.05, 0.97 - depthPenalty - decoyPenalty);
   const raw = Math.random();
   if (raw < baseFidelity) {
     const s = skill.score(skill.expected);
-    return { fidelity: 1, correct: s.total, total: s.total, display: skill.expected.substring(0,40), output: skill.expected };
-  } else if (raw < baseFidelity + 0.15) {
+    return { fidelity:1, correct:s.total, total:s.total, display:skill.expected.substring(0,40), output:skill.expected };
+  } else if (raw < baseFidelity + 0.12) {
     const frac = 0.3 + Math.random() * 0.5;
     const partial = skill.expected.substring(0, Math.floor(skill.expected.length * frac));
     const s = skill.score(partial);
-    return { ...s, output: partial };
+    return { ...s, output:partial };
   } else {
     const s = skill.score(skill.expected);
-    return { fidelity: 0, correct: 0, total: s.total, display: 'not_found', output: '' };
+    return { fidelity:0, correct:0, total:s.total, display:'not_found', output:'' };
   }
 }
 
+// ── Run ──
 let running = false;
 async function startRun() {
   if (running) return;
   running = true;
   const trials = parseInt(trialsSlider.value);
-  const noiseCount = parseInt(noiseSlider.value);
+  const noiseCount = sliderToNoise(noiseSlider.value);
   const skill = currentSkill();
   const isLive = mode === 'live';
   if (isLive && !document.getElementById('apiKey').value.trim()) {
@@ -615,13 +767,18 @@ async function startRun() {
   document.getElementById('runBtn').disabled = true;
   const provKey = document.getElementById('providerSelect').value;
   const badge = document.getElementById('providerBadge');
-  badge.textContent = isLive ? provKey.toUpperCase().replace('_',' ') : 'SIMULATED';
+  const modeLabel = haystackMode === 'multi' ? ' · MULTI' : '';
+  badge.textContent = (isLive ? provKey.toUpperCase().replace('_',' ') : 'SIMULATED') + modeLabel;
   badge.style.display = 'inline-flex';
 
   let totalFidelity = 0, passes = 0, partials = 0, fails = 0;
   const trialResults = [];
 
   const body = document.getElementById('resultsBody');
+  const decoyCount = haystackMode === 'multi' ? parseInt(decoySlider.value) : 0;
+  const contextLabel = noiseCount === 0 ? 'baseline' :
+    `${noiseLabel(noiseCount)} words${decoyCount ? ` + ${decoyCount} decoy${decoyCount>1?'s':''}` : ''}`;
+
   body.innerHTML = `
     <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
     <div class="fidelity-section">
@@ -673,9 +830,8 @@ async function startRun() {
   }
 
   const avgFid = totalFidelity / trials;
-  const noiseLbl = noiseCount === 0 ? 'baseline (0 noise)' : `${noiseCount} noise words`;
   document.getElementById('fidelitySub').textContent =
-    `${Math.round(avgFid*100)}% avg · ${noiseLbl} · ${trials} trials`;
+    `${Math.round(avgFid*100)}% avg · ${contextLabel} · ${trials} trials`;
 
   document.getElementById('outputLog').innerHTML =
     '<div class="output-header">Trial Output Log</div>' +
@@ -693,8 +849,8 @@ async function startRun() {
   document.getElementById('runBtn').disabled = false;
 }
 
+// ── Init ──
 onSkillChange();
-// Init zero-tag
 document.getElementById('zeroTag').style.display = 'inline-flex';
 </script>
 </body>
