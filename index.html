@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Skill Haystack">
+<meta name="theme-color" content="#0f0f0d">
+<title>Skill-Haystack</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg:#0f0f0d; --surface:#181816; --surface-2:#1e1e1b; --surface-3:#252522;
+  --border:rgba(255,255,255,0.07); --border-med:rgba(255,255,255,0.12);
+  --text:#e8e6e0; --text-muted:#8a8880; --text-faint:#48463f;
+  --primary:#4f98a3; --primary-dim:rgba(79,152,163,0.15); --primary-border:rgba(79,152,163,0.3);
+  --pass:#6daa45; --pass-dim:rgba(109,170,69,0.15); --pass-border:rgba(109,170,69,0.3);
+  --fail:#dd6974; --fail-dim:rgba(221,105,116,0.15); --fail-border:rgba(221,105,116,0.3);
+  --gold:#e8af34; --gold-dim:rgba(232,175,52,0.15);
+  --font:'Satoshi',system-ui,sans-serif;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+  --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:18px; --r-full:999px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg);-webkit-font-smoothing:antialiased;height:100%}
+body{
+  font-family:var(--font);font-size:16px;color:var(--text);background:var(--bg);
+  min-height:100svh;display:flex;flex-direction:column;
+  padding-top:var(--safe-top);padding-bottom:var(--safe-bottom);
+}
+button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
+select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* ── HEADER ── */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;
+  background:color-mix(in oklch,var(--surface) 90%,transparent);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{
+  width:32px;height:32px;border-radius:var(--r-md);
+  background:var(--primary-dim);border:1px solid var(--primary-border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.logo-name{font-size:15px;font-weight:700;letter-spacing:-0.02em}
+.logo-version{font-size:11px;color:var(--text-faint);font-weight:500;
+  background:var(--surface-3);border:1px solid var(--border);
+  border-radius:var(--r-full);padding:1px 7px;margin-left:4px}
+.theme-btn{
+  width:36px;height:36px;border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);transition:background 0.15s,color 0.15s;
+}
+.theme-btn:active{background:var(--surface-3);color:var(--text)}
+
+/* ── SCROLL AREA ── */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 16px;display:flex;flex-direction:column;gap:14px}
+
+/* ── CARDS ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-xl);overflow:hidden;
+}
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px 0;
+}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-faint)}
+.card-body{padding:14px 16px 16px}
+
+/* ── FORM CONTROLS ── */
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;font-weight:500}
+.select-wrap{position:relative}
+.select-wrap::after{
+  content:'';position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  border:4px solid transparent;border-top-color:var(--text-muted);margin-top:2px;
+  pointer-events:none;
+}
+select{
+  width:100%;padding:10px 36px 10px 12px;
+  background:var(--surface-2);border:1px solid var(--border-med);
+  border-radius:var(--r-md);font-size:14px;
+  appearance:none;-webkit-appearance:none;
+  transition:border-color 0.15s;
+}
+select:focus{border-color:var(--primary);outline:none}
+
+.slider-row{display:flex;align-items:center;gap:10px}
+.slider-row input[type=range]{
+  flex:1;-webkit-appearance:none;appearance:none;
+  height:4px;border-radius:var(--r-full);
+  background:var(--surface-3);outline:none;
+}
+.slider-row input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;
+  border-radius:50%;background:var(--primary);
+  box-shadow:0 0 0 3px var(--primary-dim);cursor:pointer;
+}
+.slider-val{
+  font-size:13px;font-weight:700;color:var(--primary);
+  min-width:40px;text-align:right;font-variant-numeric:tabular-nums;
+}
+
+/* ── HAYSTACK PREVIEW ── */
+.haystack-box{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:12px;
+  font-family:var(--mono);font-size:12px;line-height:1.8;
+  color:var(--text-muted);max-height:160px;overflow-y:auto;
+  word-break:break-word;
+  -webkit-overflow-scrolling:touch;
+}
+.haystack-box .trigger{
+  color:var(--primary);font-weight:700;
+  background:var(--primary-dim);border-radius:3px;padding:0 3px;
+}
+.preview-meta{font-size:11px;color:var(--text-faint);margin-top:8px}
+
+/* ── RUN BUTTON ── */
+.run-btn{
+  width:100%;padding:15px;
+  background:var(--primary);color:#fff;
+  border-radius:var(--r-lg);font-size:15px;font-weight:700;
+  transition:opacity 0.15s,transform 0.1s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.run-btn:active{opacity:0.85;transform:scale(0.98)}
+.run-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+/* ── RESULTS ── */
+.rate-row{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+.rate-big{font-size:42px;font-weight:800;letter-spacing:-0.03em;line-height:1;color:var(--pass);font-variant-numeric:tabular-nums}
+.rate-big.mid{color:var(--gold)}
+.rate-big.low{color:var(--fail)}
+.rate-label{font-size:13px;color:var(--text-muted)}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat-pill{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--r-md);padding:10px 8px;text-align:center;
+}
+.stat-num{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:3px}
+.stat-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.06em}
+.stat-pass .stat-num{color:var(--pass)}
+.stat-fail .stat-num{color:var(--fail)}
+.stat-total .stat-num{color:var(--primary)}
+
+.trial-grid{display:flex;flex-wrap:wrap;gap:5px}
+.dot{
+  width:30px;height:30px;border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;font-family:var(--mono);
+  border:1px solid transparent;transition:all 0.15s;
+}
+.dot.pending{background:var(--surface-3);color:var(--text-faint);border-color:var(--border)}
+.dot.running{background:var(--primary-dim);color:var(--primary);border-color:var(--primary-border);animation:pulse 0.8s ease-in-out infinite}
+.dot.pass{background:var(--pass-dim);color:var(--pass);border-color:var(--pass-border)}
+.dot.fail{background:var(--fail-dim);color:var(--fail);border-color:var(--fail-border)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+
+.fail-log{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--text-muted)}
+.fail-entry{color:var(--fail);padding:2px 0;border-bottom:1px solid var(--border);display:flex;gap:8px}
+.fail-entry:last-child{border-bottom:none}
+.fail-trial{color:var(--text-faint);min-width:48px}
+
+.empty{
+  display:flex;flex-direction:column;align-items:center;
+  padding:32px 16px;color:var(--text-faint);text-align:center;gap:10px;
+}
+.empty svg{opacity:0.3}
+.empty p{font-size:13px;color:var(--text-muted);max-width:26ch}
+
+.provider-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:var(--r-full);
+  font-size:11px;font-weight:600;
+  background:var(--primary-dim);color:var(--primary);border:1px solid var(--primary-border);
+}
+
+.progress-track{height:3px;background:var(--surface-3);border-radius:var(--r-full);overflow:hidden;margin-bottom:14px}
+.progress-fill{height:100%;background:var(--primary);border-radius:var(--r-full);transition:width 0.25s ease;width:0}
+
+.api-input{
+  width:100%;padding:10px 12px;
+  background:var(--surface-2);border:1px solid var(--border-med);
+  border-radius:var(--r-md);font-size:13px;font-family:var(--mono);
+  transition:border-color 0.15s;
+}
+.api-input:focus{border-color:var(--primary);outline:none}
+.api-input::placeholder{color:var(--text-faint)}
+.api-hint{font-size:11px;color:var(--text-faint);margin-top:5px}
+
+.mode-row{display:flex;gap:6px;margin-bottom:14px}
+.mode-btn{
+  flex:1;padding:8px 4px;border-radius:var(--r-md);font-size:12px;font-weight:600;
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text-muted);
+  transition:all 0.15s;
+}
+.mode-btn.active{background:var(--primary-dim);border-color:var(--primary-border);color:var(--primary)}
+.mode-btn:active{opacity:0.7}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="3" fill="#4f98a3"/>
+        <path d="M3 13 L8 3 L13 13" stroke="#4f98a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+      </svg>
+    </div>
+    <span class="logo-name">Skill-Haystack <span class="logo-version">v1</span></span>
+  </div>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+    <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<div class="scroll">
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">Config</span></div>
+    <div class="card-body">
+      <div class="mode-row">
+        <button class="mode-btn active" id="modeSimBtn" onclick="setMode('simulate')">Simulate</button>
+        <button class="mode-btn" id="modeLiveBtn" onclick="setMode('live')">Live API</button>
+      </div>
+      <div class="field">
+        <label class="field-label">Skill</label>
+        <div class="select-wrap">
+          <select id="skillSelect">
+            <option value="weather" data-token="BENCH-weather::4821" data-triggers="what's the weather,current weather,weather forecast,temperature outside">Weather Lookup</option>
+            <option value="translate" data-token="BENCH-translate::7193" data-triggers="translate this,in spanish,how do you say,translate to french">Language Translation</option>
+            <option value="summarize" data-token="BENCH-summarize::3047" data-triggers="summarize this,tl;dr,key points from,brief overview of">Document Summarizer</option>
+            <option value="calendar" data-token="BENCH-calendar::9562" data-triggers="schedule a meeting,add to my calendar,book an appointment,set a reminder">Calendar Event Creator</option>
+            <option value="search" data-token="BENCH-search::6384" data-triggers="search for,look up,find information about,what is the latest on">Web Search</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Noise Words</label>
+        <div class="slider-row">
+          <input type="range" id="noiseSlider" min="50" max="2000" step="50" value="200">
+          <span class="slider-val" id="noiseVal">200</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Trials</label>
+        <div class="slider-row">
+          <input type="range" id="trialsSlider" min="5" max="30" step="5" value="20">
+          <span class="slider-val" id="trialsVal">20</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Trigger Position</label>
+        <div class="select-wrap">
+          <select id="positionSelect">
+            <option value="random">Random</option>
+            <option value="start">Start</option>
+            <option value="middle">Middle</option>
+            <option value="end">End</option>
+          </select>
+        </div>
+      </div>
+      <div id="liveFields" style="display:none">
+        <div class="field">
+          <label class="field-label">Provider</label>
+          <div class="select-wrap">
+            <select id="providerSelect">
+              <option value="groq">Groq (llama-3.3-70b) — Free tier</option>
+              <option value="openai">OpenAI (gpt-4o)</option>
+              <option value="anthropic">Anthropic (claude-3-5-sonnet)</option>
+              <option value="gemini">Gemini (gemini-2.0-flash)</option>
+              <option value="mistral">Mistral (mistral-small)</option>
+              <option value="xai">xAI (grok-3)</option>
+              <option value="deepseek">DeepSeek (deepseek-chat)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">API Key</label>
+          <input class="api-input" type="password" id="apiKey" placeholder="sk-..." autocomplete="off" autocorrect="off" spellcheck="false">
+          <div class="api-hint">Key stored in memory only. Never leaves your device.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Haystack Preview</span>
+      <button onclick="updatePreview()" style="font-size:11px;color:var(--text-muted);background:var(--surface-3);border:1px solid var(--border);border-radius:var(--r-full);padding:3px 10px">↺ Shuffle</button>
+    </div>
+    <div class="card-body">
+      <div class="haystack-box" id="haystackPreview">Tap Shuffle to preview…</div>
+      <div class="preview-meta" id="previewMeta"></div>
+    </div>
+  </div>
+
+  <button class="run-btn" id="runBtn" onclick="startRun()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
+    Run Benchmark
+  </button>
+
+  <div class="card" id="resultsCard">
+    <div class="card-header"><span class="card-title">Results</span><span id="providerBadge" class="provider-badge" style="display:none"></span></div>
+    <div class="card-body" id="resultsBody">
+      <div class="empty">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <p>Run the benchmark to see results</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const root = document.documentElement;
+const themeBtn = document.getElementById('themeBtn');
+const sunSVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+const moonSVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+let theme = 'dark';
+themeBtn.addEventListener('click', () => {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', theme);
+  themeBtn.innerHTML = theme === 'dark' ? moonSVG : sunSVG;
+  if (theme === 'light') applyLight(); else applyDark();
+});
+function applyLight() {
+  root.style.setProperty('--bg','#f7f6f2');
+  root.style.setProperty('--surface','#f9f8f5');
+  root.style.setProperty('--surface-2','#f3f0ec');
+  root.style.setProperty('--surface-3','#e6e4df');
+  root.style.setProperty('--border','rgba(0,0,0,0.07)');
+  root.style.setProperty('--border-med','rgba(0,0,0,0.12)');
+  root.style.setProperty('--text','#28251d');
+  root.style.setProperty('--text-muted','#7a7974');
+  root.style.setProperty('--text-faint','#bab9b4');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#f7f6f2');
+}
+function applyDark() {
+  root.style.setProperty('--bg','#0f0f0d');
+  root.style.setProperty('--surface','#181816');
+  root.style.setProperty('--surface-2','#1e1e1b');
+  root.style.setProperty('--surface-3','#252522');
+  root.style.setProperty('--border','rgba(255,255,255,0.07)');
+  root.style.setProperty('--border-med','rgba(255,255,255,0.12)');
+  root.style.setProperty('--text','#e8e6e0');
+  root.style.setProperty('--text-muted','#8a8880');
+  root.style.setProperty('--text-faint','#48463f');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#0f0f0d');
+}
+
+let mode = 'simulate';
+function setMode(m) {
+  mode = m;
+  document.getElementById('modeSimBtn').classList.toggle('active', m === 'simulate');
+  document.getElementById('modeLiveBtn').classList.toggle('active', m === 'live');
+  document.getElementById('liveFields').style.display = m === 'live' ? 'block' : 'none';
+}
+
+const noiseSlider = document.getElementById('noiseSlider');
+const noiseVal = document.getElementById('noiseVal');
+const trialsSlider = document.getElementById('trialsSlider');
+const trialsVal = document.getElementById('trialsVal');
+noiseSlider.addEventListener('input', () => { noiseVal.textContent = noiseSlider.value; updatePreview(); });
+trialsSlider.addEventListener('input', () => { trialsVal.textContent = trialsSlider.value; });
+document.getElementById('skillSelect').addEventListener('change', updatePreview);
+document.getElementById('positionSelect').addEventListener('change', updatePreview);
+
+const NOISE = ['the','a','an','and','but','or','in','on','at','to','for','with','by','from','up',
+  'about','into','through','before','after','above','below','between','out','over','under',
+  'again','then','here','there','when','where','how','all','each','every','both','few','more',
+  'most','other','some','than','too','very','just','because','as','until','while','however',
+  'therefore','moreover','approximately','specifically','generally','recently','previously',
+  'currently','typically','usually','frequently','occasionally','rarely','almost','also',
+  'always','never','often','since','still','yet','alpha','beta','delta','node','sync','flow',
+  'data','stream','buffer','cache','vector','scalar','parse','render','compile','execute',
+  'route','path','query','schema','model','field','value','key','record','cursor','offset',
+  'metric','label','tag','measure','sample','average','median','index','range','scope'];
+
+function rw() { return NOISE[Math.floor(Math.random() * NOISE.length)]; }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function getTrigger() {
+  const opt = document.getElementById('skillSelect').options[document.getElementById('skillSelect').selectedIndex];
+  const ts = opt.dataset.triggers.split(',');
+  return ts[Math.floor(Math.random() * ts.length)].trim();
+}
+
+function buildHaystack(noiseCount, position, trigger) {
+  const words = Array.from({length: noiseCount}, rw);
+  const pos = position === 'random' ? ['start','middle','end'][Math.floor(Math.random()*3)] : position;
+  let idx = pos === 'start' ? 0 : pos === 'end' ? words.length : Math.floor(words.length / 2);
+  words.splice(idx, 0, '__TRIGGER__');
+  return { words, triggerIdx: idx, trigger, position: pos };
+}
+
+let lastHaystack = null;
+function updatePreview() {
+  const n = parseInt(noiseSlider.value);
+  const trigger = getTrigger();
+  const h = buildHaystack(n, document.getElementById('positionSelect').value, trigger);
+  lastHaystack = h;
+  const html = h.words.map(w => w === '__TRIGGER__'
+    ? `<span class="trigger">${esc(trigger)}</span>`
+    : esc(w)).join(' ') + '.';
+  document.getElementById('haystackPreview').innerHTML = html;
+  document.getElementById('previewMeta').textContent = `${n} noise words · trigger at ~${h.triggerIdx} (${h.position})`;
+}
+updatePreview();
+
+const PROVIDERS = {
+  groq:     { url:'https://api.groq.com/openai/v1/chat/completions',      model:'llama-3.3-70b-versatile', compat:'openai' },
+  openai:   { url:'https://api.openai.com/v1/chat/completions',           model:'gpt-4o',                  compat:'openai' },
+  mistral:  { url:'https://api.mistral.ai/v1/chat/completions',           model:'mistral-small-latest',    compat:'openai' },
+  deepseek: { url:'https://api.deepseek.com/v1/chat/completions',         model:'deepseek-chat',           compat:'openai' },
+  xai:      { url:'https://api.x.ai/v1/chat/completions',                 model:'grok-3',                  compat:'openai' },
+  anthropic:{ url:'https://api.anthropic.com/v1/messages',                model:'claude-3-5-sonnet-latest',compat:'anthropic' },
+  gemini:   { url:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', model:'', compat:'gemini' },
+};
+
+function buildPrompt(haystack, token) {
+  return `You are a skill router. Read the following document carefully. If you find a skill trigger phrase in the document, respond with ONLY its exact token — no other words.\n\nDocument:\n${haystack}\n\nExpected token format example: BENCH-skill::1234\nRespond with the token only, or "NO_SKILL_FOUND" if no trigger is present.`;
+}
+
+async function callLLM(haystackText, token) {
+  const prov = document.getElementById('providerSelect').value;
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const p = PROVIDERS[prov];
+  const prompt = buildPrompt(haystackText, token);
+  try {
+    let res, text;
+    if (p.compat === 'openai') {
+      res = await fetch(p.url, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+        body: JSON.stringify({ model: p.model, messages:[{role:'user',content:prompt}], max_tokens:50, temperature:0 })
+      });
+      const d = await res.json();
+      text = d.choices?.[0]?.message?.content?.trim() || '';
+    } else if (p.compat === 'anthropic') {
+      res = await fetch(p.url, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+        body: JSON.stringify({ model: p.model, max_tokens:50, messages:[{role:'user',content:prompt}] })
+      });
+      const d = await res.json();
+      text = d.content?.[0]?.text?.trim() || '';
+    } else if (p.compat === 'gemini') {
+      res = await fetch(`${p.url}?key=${apiKey}`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ contents:[{parts:[{text:prompt}]}], generationConfig:{maxOutputTokens:50,temperature:0} })
+      });
+      const d = await res.json();
+      text = d.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+    }
+    const pass = text === token;
+    return { pass, output: text, failMode: pass ? null : (text === 'NO_SKILL_FOUND' ? 'not_found' : 'wrong_token') };
+  } catch(e) {
+    return { pass: false, output: 'API_ERROR', failMode: 'api_error' };
+  }
+}
+
+async function simulateTrial(token, noiseCount) {
+  await new Promise(r => setTimeout(r, 60 + Math.random() * 120));
+  const difficulty = Math.min(0.35, noiseCount / 2000);
+  const pass = Math.random() < (0.82 - difficulty);
+  const modes = ['not_found','wrong_token','malformed_token'];
+  return { pass, output: pass ? token : modes[Math.floor(Math.random()*modes.length)], failMode: pass ? null : modes[Math.floor(Math.random()*modes.length)] };
+}
+
+let running = false;
+async function startRun() {
+  if (running) return;
+  running = true;
+  const trials = parseInt(trialsSlider.value);
+  const noiseCount = parseInt(noiseSlider.value);
+  const opt = document.getElementById('skillSelect').options[document.getElementById('skillSelect').selectedIndex];
+  const token = opt.dataset.token;
+  const isLive = mode === 'live';
+  if (isLive && !document.getElementById('apiKey').value.trim()) {
+    alert('Please enter an API key to use Live API mode.');
+    running = false; return;
+  }
+  document.getElementById('runBtn').disabled = true;
+  const badge = document.getElementById('providerBadge');
+  badge.textContent = isLive ? document.getElementById('providerSelect').value.toUpperCase() : 'SIMULATED';
+  badge.style.display = 'inline-flex';
+  const trigger = getTrigger();
+  const h = buildHaystack(noiseCount, document.getElementById('positionSelect').value, trigger);
+  lastHaystack = h;
+  const haystackText = h.words.map(w => w === '__TRIGGER__' ? trigger : w).join(' ') + '.';
+  document.getElementById('haystackPreview').innerHTML = h.words.map(w =>
+    w === '__TRIGGER__' ? `<span class="trigger">${esc(trigger)}</span>` : esc(w)).join(' ') + '.';
+  document.getElementById('previewMeta').textContent = `${noiseCount} noise words · trigger at ~${h.triggerIdx} (${h.position})`;
+  let passes = 0, fails = 0;
+  const failures = [];
+  const body = document.getElementById('resultsBody');
+  body.innerHTML = `
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+    <div class="rate-row">
+      <div class="rate-big" id="rateBig">—</div>
+      <div class="rate-label" id="rateLabel">running…</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-pill stat-pass"><div class="stat-num" id="sPass">0</div><div class="stat-label">Pass</div></div>
+      <div class="stat-pill stat-fail"><div class="stat-num" id="sFail">0</div><div class="stat-label">Fail</div></div>
+      <div class="stat-pill stat-total"><div class="stat-num" id="sTotal">0/${trials}</div><div class="stat-label">Total</div></div>
+    </div>
+    <div class="trial-grid" id="dotGrid"></div>
+    <div class="fail-log" id="failLog"></div>
+  `;
+  const dotGrid = document.getElementById('dotGrid');
+  const dots = [];
+  for (let i = 0; i < trials; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot pending';
+    d.textContent = String(i+1).padStart(2,'0');
+    dotGrid.appendChild(d);
+    dots.push(d);
+  }
+  for (let i = 0; i < trials; i++) {
+    dots[i].className = 'dot running';
+    const result = isLive ? await callLLM(haystackText, token) : await simulateTrial(token, noiseCount);
+    dots[i].className = `dot ${result.pass ? 'pass' : 'fail'}`;
+    if (result.pass) passes++; else { fails++; failures.push({n:i+1, mode: result.failMode, out: result.output}); }
+    const rate = passes / (i+1);
+    const ratePct = Math.round(rate * 100);
+    const rateEl = document.getElementById('rateBig');
+    rateEl.textContent = ratePct + '%';
+    rateEl.className = 'rate-big' + (rate >= 0.85 ? '' : rate >= 0.65 ? ' mid' : ' low');
+    document.getElementById('rateLabel').textContent = `${passes}/${i+1} passed`;
+    document.getElementById('sPass').textContent = passes;
+    document.getElementById('sFail').textContent = fails;
+    document.getElementById('sTotal').textContent = `${i+1}/${trials}`;
+    document.getElementById('progFill').style.width = ((i+1)/trials*100) + '%';
+  }
+  document.getElementById('rateLabel').textContent = `${passes}/${trials} passed · ${noiseCount} noise words`;
+  if (failures.length) {
+    const fl = document.getElementById('failLog');
+    fl.innerHTML = '<div style="color:var(--text-faint);font-size:10px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Failure Log</div>' +
+      failures.map(f => `<div class="fail-entry"><span class="fail-trial">#${String(f.n).padStart(2,'0')}</span><span>${f.mode}</span></div>`).join('');
+  }
+  running = false;
+  document.getElementById('runBtn').disabled = false;
+}
+</script>
+</body>
+</html>
